@@ -30,7 +30,7 @@ public class LancamentoService {
 		return lancamentoRespository.findAllOrderNumeroParcela();
 	}
 
-	public List<LancamentoDTO> findfindListMain(int pMesReferencia, int pAnoReferencia) {
+	public List<LancamentoDTO> findListMain(int pMesReferencia, int pAnoReferencia) {
 		List<LancamentoDTO> listaLancamentoDTO = new ArrayList<>();
 		for (Lancamento pLancamento : lancamentoRespository.findfindListMain(pMesReferencia, pAnoReferencia)) {
 			listaLancamentoDTO.add(new LancamentoDTO(pLancamento));
