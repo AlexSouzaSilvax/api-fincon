@@ -48,19 +48,31 @@ public class LancamentoController {
 	}
 
 	@GetMapping
+	@RequestMapping("find-by-id")
+	public ResponseEntity<Object> findById(@RequestParam("id") Long pId) {
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(lancamentoService.findById(pId));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
+							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
+							"/api/lancamento/findById"));
+		}
+	}
+
+	@GetMapping
 	@RequestMapping("find-list-main")
 	public ResponseEntity<Object> findListMain(@RequestParam("mes_referencia") int pMesReferencia,
 			@RequestParam("ano_referencia") int pAnoReferencia) {
 		try {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(lancamentoService.findfindListMain(pMesReferencia, pAnoReferencia));
+					.body(lancamentoService.findListMain(pMesReferencia, pAnoReferencia));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
 							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
-							"/api/lancamento/findAllOrderNumeroParcela"));
+							"/api/lancamento/findListMain"));
 		}
-
 	}
 
 	@PostMapping
