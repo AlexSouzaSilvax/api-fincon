@@ -1,7 +1,6 @@
 package com.fincon.service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +23,17 @@ public class LancamentoService {
 		return lancamentoRespository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 	}
 
+	public List<Lancamento> findAllOrderNumeroParcela() {
+		return lancamentoRespository.findAllOrderNumeroParcela();
+	}
+
 	public Optional<Lancamento> findById(Long id) {
 		return lancamentoRespository.findById(id);
+	}
+
+	public String delete(Long id) {
+		lancamentoRespository.deleteById(id);
+		return "Apagado com sucesso";
 	}
 
 	public Lancamento save(Lancamento pLancamento) {
@@ -39,44 +47,18 @@ public class LancamentoService {
 		}
 
 		// quando for mensal
-		if (pLancamento.isMensal() && pLancamento.getTipoPagamento() != 3) {
-			System.out.println("é mensal");
-			// em andamento
+		if (pLancamento.isMensal() && pLancamento.getTipoPagamento() != 3) {			
+			// replicar para apenas 6 meses, NO CASO O ATUAL + 6 PRA FRENTE
+			saveLancamentosProxMensal(5, pLancamento);
 		}
 
 		// quando for parcelado
 		if (pLancamento.getQuantidadeParcelas() > 1) {
-
 			// criando proximas parcelas
-			System.out.println("\n<----- INICIO ----->\n");
-			System.out.println(
-					"Mês/Ano referência: " + pLancamento.getMesReferencia() + "/" + pLancamento.getAnoReferencia());
-			System.out.println("Quantidade de parcelas: " + pLancamento.getQuantidadeParcelas());
-
 			// salva parcelas do ano atual
 			int quantidadeParcelasAnoAtual = saveLancamentoParcelasAnoAtual(pLancamento);
-
-			// verifica quantos anos de parcelas						
-			// salva parcelas por ano
-			//saveParcelasPorAno();
-			int quantidadedeParcelasProximoAno = pLancamento.getQuantidadeParcelas() - quantidadeParcelasAnoAtual;				
-			int numeroParcela = quantidadeParcelasAnoAtual+1;
-			int novoAnoReferencia = pLancamento.getAnoReferencia() + 1;
-			int novo = 1;					
-			if(quantidadedeParcelasProximoAno > 0) {
-				for(int i = 0; i < quantidadedeParcelasProximoAno; i++) {
-					int novoMesReferencia = 0 + novo;	
-					saveLancamentoParcelas(numeroParcela, pLancamento, novoMesReferencia, novoAnoReferencia);
-					novo++;
-					numeroParcela++;					
-					if(novoMesReferencia == 12) {
-						novoAnoReferencia++;
-						novo = 1;
-					}
-				}				
-			}
-
-			System.out.println("\n<----- FIM ----->\n");
+			// salva restante das parcelas
+			salvaParcelasDoProxAnoDiante(quantidadeParcelasAnoAtual, pLancamento);
 
 			pLancamento.setNumeroParcela(1);
 			pLancamento.setDescricao(pLancamento.getDescricao() + " " + 1 + "/" + pLancamento.getQuantidadeParcelas());
@@ -85,39 +67,46 @@ public class LancamentoService {
 		return lancamentoRespository.save(pLancamento);
 	}
 
-	public void delete(Long id) {
-		lancamentoRespository.deleteById(id);
+	private void saveLancamentosProxMensal(int pQuantidadedeMensal, Lancamento pLancamento) {
+		int quantidadedeMensal = pQuantidadedeMensal;
+		int novoAnoReferencia = pLancamento.getAnoReferencia();
+		int novo = 1;
+		if (quantidadedeMensal > 0) {
+			for (int i = 0; i < quantidadedeMensal; i++) {
+				int novoMesReferencia = pLancamento.getMesReferencia() + novo;
+				lancamentoRespository.save(manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia));
+				novo++;
+				novoMesReferencia++;
+				if (novoMesReferencia == 12) {
+					novoAnoReferencia++;
+					novo = 1;
+				}
+			}
+		}
 	}
-	
-	public void saveParcelasPorAno() {
-		/*
-		int quantidadedeParcelasProximoAno = pLancamento.getQuantidadeParcelas();
-		int quantidadeAnosParcela = quantidadedeParcelasProximoAno / 12;
-		System.out.println("Quantidade de anos de parcela: " + quantidadeAnosParcela);
-		int numeroParcela = quantidadeParcelasAnoAtual;
+
+	private void salvaParcelasDoProxAnoDiante(int quantidadeParcelasAnoAtual, Lancamento pLancamento) {
+		int quantidadedeParcelasProximoAno = pLancamento.getQuantidadeParcelas() - quantidadeParcelasAnoAtual;
+		int numeroParcela = quantidadeParcelasAnoAtual + 1;
 		int novoAnoReferencia = pLancamento.getAnoReferencia() + 1;
 		int novo = 1;
-		
-		for (int i = 0; i < quantidadeAnosParcela; i++) {
-
-			for (int j = 0; j < 12; j++) {
+		if (quantidadedeParcelasProximoAno > 0) {
+			for (int i = 0; i < quantidadedeParcelasProximoAno; i++) {
 				int novoMesReferencia = 0 + novo;
-				System.out.println("\n<----- " + novoAnoReferencia + " ----->");
 				saveLancamentoParcelas(numeroParcela, pLancamento, novoMesReferencia, novoAnoReferencia);
 				novo++;
 				numeroParcela++;
+				if (novoMesReferencia == 12) {
+					novoAnoReferencia++;
+					novo = 1;
+				}
 			}
-			novoAnoReferencia++;
-			quantidadedeParcelasProximoAno = quantidadedeParcelasProximoAno - novo;
-			System.out.println("Quantidade de parcelas para o próximo ano: " + quantidadedeParcelasProximoAno);
-			System.out.println("<----- " + novoAnoReferencia + " ----->\n");
-
 		}
-		*/
+
 	}
-	
-	// retorna quantidade de parcelas do ano atual já salvas
-	public int saveLancamentoParcelasAnoAtual(Lancamento pLancamento) {
+
+// retorna quantidade de parcelas do ano atual já salvas
+	private int saveLancamentoParcelasAnoAtual(Lancamento pLancamento) {
 		int pQuantidadeParcelas = pLancamento.getQuantidadeParcelas();
 		int pMesReferencia = pLancamento.getMesReferencia();
 		int pAnoReferencia = pLancamento.getAnoReferencia();
@@ -131,10 +120,16 @@ public class LancamentoService {
 		}
 		return novo;
 	}
-	
 
-	// salva lancamentos parcela
-	public void saveLancamentoParcelas(int i, Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
+// salva lancamentos parcela
+	private void saveLancamentoParcelas(int i, Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
+		Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);
+		lancamento.setDescricao(pLancamento.getDescricao() + " " + i + "/" + pLancamento.getQuantidadeParcelas());
+		lancamento.setNumeroParcela(i);
+		lancamentoRespository.save(lancamento);
+	}
+
+	private Lancamento manipulaDadosLancamento(Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		Lancamento lancamento = new Lancamento();
 		// trata mes fevereiro
 		if (novoMesReferencia == 2) {
@@ -165,10 +160,9 @@ public class LancamentoService {
 		lancamento.setTipoPagamento(pLancamento.getTipoPagamento());
 		lancamento.setQuantidadeParcelas(pLancamento.getQuantidadeParcelas());
 		lancamento.setDataLancamento(pLancamento.getDataLancamento());
-		lancamento.setDescricao(pLancamento.getDescricao() + " " + i + "/" + pLancamento.getQuantidadeParcelas());
-		lancamento.setNumeroParcela(i);
+		lancamento.setDescricao(pLancamento.getDescricao());
 		lancamento.setObservacao(pLancamento.getObservacao());
-		lancamentoRespository.save(lancamento);
+		return pLancamento;
 	}
 
 }
