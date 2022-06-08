@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fincon.enums.TipoLancamento;
+import com.fincon.enums.TipoPagamento;
 
 import lombok.Data;
 
@@ -25,7 +27,7 @@ public class Lancamento {
 
 	@Column(name = "tipo_lancamento", nullable = false)
 	@JsonProperty("tipo_lancamento")
-	private int tipoLancamento;
+	private TipoLancamento tipoLancamento;
 
 	@Column(name = "descricao", nullable = false, length = 9999)
 	private String descricao;
@@ -41,7 +43,7 @@ public class Lancamento {
 
 	@Column(name = "tipo_pagamento", nullable = false)
 	@JsonProperty("tipo_pagamento")
-	private int tipoPagamento;
+	private TipoPagamento tipoPagamento;
 
 	@Column(name = "quantidade_parcelas")
 	@JsonProperty("quantidade_parcelas")

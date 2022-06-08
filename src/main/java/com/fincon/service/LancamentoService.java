@@ -1,11 +1,14 @@
 package com.fincon.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.fincon.dto.LancamentoDTO;
+import com.fincon.enums.TipoPagamento;
 import com.fincon.model.Lancamento;
 import com.fincon.repository.LancamentoRepository;
 
@@ -25,6 +28,14 @@ public class LancamentoService {
 
 	public List<Lancamento> findAllOrderNumeroParcela() {
 		return lancamentoRespository.findAllOrderNumeroParcela();
+	}
+
+	public List<LancamentoDTO> findfindListMain(int pMesReferencia, int pAnoReferencia) {
+		List<LancamentoDTO> listaLancamentoDTO = new ArrayList<>();
+		for (Lancamento pLancamento : lancamentoRespository.findfindListMain(pMesReferencia, pAnoReferencia)) {
+			listaLancamentoDTO.add(new LancamentoDTO(pLancamento));
+		}
+		return listaLancamentoDTO;
 	}
 
 	public Optional<Lancamento> findById(Long id) {
@@ -47,7 +58,7 @@ public class LancamentoService {
 		}
 
 		// quando for mensal
-		if (pLancamento.isMensal() && pLancamento.getTipoPagamento() != 3) {			
+		if (pLancamento.isMensal() && pLancamento.getTipoPagamento() != TipoPagamento.CREDITO) {
 			// replicar para apenas 6 meses, NO CASO O ATUAL + 6 PRA FRENTE
 			saveLancamentosProxMensal(5, pLancamento);
 		}
@@ -105,7 +116,7 @@ public class LancamentoService {
 
 	}
 
-// retorna quantidade de parcelas do ano atual já salvas
+	// retorna quantidade de parcelas do ano atual já salvas
 	private int saveLancamentoParcelasAnoAtual(Lancamento pLancamento) {
 		int pQuantidadeParcelas = pLancamento.getQuantidadeParcelas();
 		int pMesReferencia = pLancamento.getMesReferencia();
@@ -121,7 +132,7 @@ public class LancamentoService {
 		return novo;
 	}
 
-// salva lancamentos parcela
+	// salva lancamentos parcela
 	private void saveLancamentoParcelas(int i, Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);
 		lancamento.setDescricao(pLancamento.getDescricao() + " " + i + "/" + pLancamento.getQuantidadeParcelas());

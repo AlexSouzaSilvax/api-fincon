@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.AllArgsConstructor;
 
@@ -37,6 +38,22 @@ public class LancamentoController {
 	public ResponseEntity<Object> findAllOrderNumeroParcela() {
 		try {
 			return ResponseEntity.status(HttpStatus.OK).body(lancamentoService.findAllOrderNumeroParcela());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
+							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
+							"/api/lancamento/findAllOrderNumeroParcela"));
+		}
+
+	}
+
+	@GetMapping
+	@RequestMapping("find-list-main")
+	public ResponseEntity<Object> findListMain(@RequestParam("mes_referencia") int pMesReferencia,
+			@RequestParam("ano_referencia") int pAnoReferencia) {
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(lancamentoService.findfindListMain(pMesReferencia, pAnoReferencia));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
