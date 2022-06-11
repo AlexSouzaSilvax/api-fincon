@@ -1,13 +1,17 @@
 package com.fincon.fincon;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class FinconApplicationTests {
+import com.fincon.model.Lancamento;
+import com.fincon.service.LancamentoService;
 
-	@Test
-	void contextLoads() {
-	}
+public class FinconApplicationTests {
 
+    private Lancamento lancamento;
+    private LancamentoService lancamentoService;
+
+    @Test
+    public void formaPagamentoCreditoParceladoTrue() {
+        
+    }
 }
