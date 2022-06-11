@@ -173,7 +173,7 @@ public class LancamentoService {
 		lancamento.setDataLancamento(pLancamento.getDataLancamento());
 		lancamento.setDescricao(pLancamento.getDescricao());
 		lancamento.setObservacao(pLancamento.getObservacao());
-		return pLancamento;
+		return lancamento;
 	}
 
 }
