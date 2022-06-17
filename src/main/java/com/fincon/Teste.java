@@ -1,42 +1,64 @@
 package com.fincon;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 
 import com.fincon.model.Lancamento;
 
 public class Teste {
 	public static void main(String[] args) {
 
-		Lancamento pLancamento = new Lancamento();
-		pLancamento.setDataVencimento(LocalDateTime.of(2022, 01, 29, 0, 0));
-		pLancamento.setDataPrevistaPagamento(LocalDateTime.of(2022, 01, 29, 0, 0));
+		// create a clock
+        ZoneId zid = ZoneId.of("America/Sao_Paulo");
+  
+        // create an LocalDateTime object using now(zoneId)
+        LocalDateTime lt = LocalDateTime.now(zid);
+  
+        // print result
+        System.out.println("LocalDateTime : "
+                           + lt);
 
-		int novoMesReferencia = 2;
-		int novoAnoReferencia = 2022;
-
-		if (novoMesReferencia == 2) {
-			System.out.println("AQUI 1");
-			if (pLancamento.getDataVencimento().getDayOfMonth() > 29) {
-				System.out.println("AQUI 2");
-				pLancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 29,
-						pLancamento.getDataVencimento().getHour(), pLancamento.getDataVencimento().getMinute()));
-				pLancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 29,
-						pLancamento.getDataVencimento().getHour(), pLancamento.getDataVencimento().getMinute()));
-			}
-		} else {
-			System.out.println("AQUI 3");
-			pLancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia,
-					pLancamento.getDataVencimento().getDayOfMonth(), pLancamento.getDataVencimento().getHour(),
-					pLancamento.getDataVencimento().getMinute()));
-			pLancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia,
-					pLancamento.getDataPrevistaPagamento().getDayOfMonth(),
-					pLancamento.getDataPrevistaPagamento().getHour(),
-					pLancamento.getDataPrevistaPagamento().getMinute()));
-		}
-		System.out.println("AQUI 4");
-		System.out.println("DATA VENCIMENTO = " + pLancamento.getDataVencimento());
-		System.out.println("DATA PREVISTA PAGAMENTO = " + pLancamento.getDataPrevistaPagamento());
-
+		/*
+		 * 
+		 * Lancamento pLancamento = new Lancamento();
+		 * pLancamento.setDataVencimento(LocalDateTime.of(2022, 01, 29, 0, 0));
+		 * pLancamento.setDataPrevistaPagamento(LocalDateTime.of(2022, 01, 29, 0, 0));
+		 * 
+		 * int novoMesReferencia = 2;
+		 * int novoAnoReferencia = 2022;
+		 * 
+		 * if (novoMesReferencia == 2) {
+		 * System.out.println("AQUI 1");
+		 * if (pLancamento.getDataVencimento().getDayOfMonth() > 29) {
+		 * System.out.println("AQUI 2");
+		 * pLancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia,
+		 * novoMesReferencia, 29,
+		 * pLancamento.getDataVencimento().getHour(),
+		 * pLancamento.getDataVencimento().getMinute()));
+		 * pLancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia,
+		 * novoMesReferencia, 29,
+		 * pLancamento.getDataVencimento().getHour(),
+		 * pLancamento.getDataVencimento().getMinute()));
+		 * }
+		 * } else {
+		 * System.out.println("AQUI 3");
+		 * pLancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia,
+		 * novoMesReferencia,
+		 * pLancamento.getDataVencimento().getDayOfMonth(),
+		 * pLancamento.getDataVencimento().getHour(),
+		 * pLancamento.getDataVencimento().getMinute()));
+		 * pLancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia,
+		 * novoMesReferencia,
+		 * pLancamento.getDataPrevistaPagamento().getDayOfMonth(),
+		 * pLancamento.getDataPrevistaPagamento().getHour(),
+		 * pLancamento.getDataPrevistaPagamento().getMinute()));
+		 * }
+		 * System.out.println("AQUI 4");
+		 * System.out.println("DATA VENCIMENTO = " + pLancamento.getDataVencimento());
+		 * System.out.println("DATA PREVISTA PAGAMENTO = " +
+		 * pLancamento.getDataPrevistaPagamento());
+		 */
 		/*
 		 * pLancamento.setQuantidadeParcelas(31); pLancamento.setMesReferencia(6);
 		 * pLancamento.setAnoReferencia(2022);
@@ -74,6 +96,7 @@ public class Teste {
 		 * 
 		 * System.out.println("\n<----- FIM ----->\n");
 		 */
+
 	}
 
 	public static int teste(int pQuantidadeParcelas, int pMesReferencia, int pAnoReferencia, Lancamento pLancamento) {

@@ -1,6 +1,7 @@
 package com.fincon.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,11 +51,11 @@ public class LancamentoService {
 	public Lancamento save(Lancamento pLancamento) {
 
 		if (pLancamento.getId() == null) {
-			pLancamento.setDataLancamento(LocalDateTime.now().minusDays(1).minusMonths(1).minusHours(2));
+			pLancamento.setDataLancamento(dataAtual());
 		}
 
 		if (pLancamento.isPago()) {
-			pLancamento.setDataPagamento(LocalDateTime.now().minusDays(1).minusMonths(1).minusHours(2));
+			pLancamento.setDataPagamento(dataAtual());
 		}
 
 		// quando for mensal
@@ -176,4 +177,7 @@ public class LancamentoService {
 		return lancamento;
 	}
 
+	private LocalDateTime dataAtual() {
+		return LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
+	}
 }
