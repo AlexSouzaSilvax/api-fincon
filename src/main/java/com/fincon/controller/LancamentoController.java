@@ -93,7 +93,7 @@ public class LancamentoController {
 
 	@PostMapping
 	@RequestMapping("delete")
-	public ResponseEntity<Object> delete(@RequestBody Long id) {
+	public ResponseEntity<Object> delete(@RequestParam Long id) {
 		try {
 			return ResponseEntity.status(HttpStatus.OK).body(lancamentoService.delete(id));
 		} catch (Exception e) {
