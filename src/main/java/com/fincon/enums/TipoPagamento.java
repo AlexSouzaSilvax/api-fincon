@@ -11,4 +11,8 @@ public enum TipoPagamento {
 		this.value = value;
 		this.descricao = descricao;
 	}
+
+    public String getDescricao() {
+        return this.descricao;
+    }
 }

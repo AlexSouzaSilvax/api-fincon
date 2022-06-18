@@ -29,6 +29,9 @@ public class Lancamento {
 	@JsonProperty("tipo_lancamento")
 	private TipoLancamento tipoLancamento;
 
+	@Column(name = "categoria", nullable = false, length = 9999)
+	private String categoria;
+
 	@Column(name = "descricao", nullable = false, length = 9999)
 	private String descricao;
 

@@ -1,0 +1,90 @@
+[
+  {
+    "id": 22,
+    "nome": "Poupança"
+  },
+  {
+    "id": 21,
+    "nome": "Combustível"
+  },
+  {
+    "id": 20,
+    "nome": "Viagem"
+  },
+  {
+    "id": 19,
+    "nome": "Transporte"
+  },
+  {
+    "id": 18,
+    "nome": "Trabalho"
+  },
+  {
+    "id": 17,
+    "nome": "Saúde"
+  },
+  {
+    "id": 16,
+    "nome": "Roupas"
+  },
+  {
+    "id": 15,
+    "nome": "Presentes/Doações"
+  },
+  {
+    "id": 14,
+    "nome": "Outros"
+  },
+  {
+    "id": 13,
+    "nome": "Mercado"
+  },
+  {
+    "id": 12,
+    "nome": "Lazer"
+  },
+  {
+    "id": 11,
+    "nome": "Investimentos"
+  },
+  {
+    "id": 10,
+    "nome": "Impostos/Taxas"
+  },
+  {
+    "id": 9,
+    "nome": "Família"
+  },
+  {
+    "id": 8,
+    "nome": "Educação"
+  },
+  {
+    "id": 7,
+    "nome": "Dívidas/Emprestimos"
+  },
+  {
+    "id": 6,
+    "nome": "Cuidados Pessoais"
+  },
+  {
+    "id": 5,
+    "nome": "Compras"
+  },
+  {
+    "id": 4,
+    "nome": "Casa"
+  },
+  {
+    "id": 3,
+    "nome": "Bares/Restaurantes"
+  },
+  {
+    "id": 2,
+    "nome": "Assinaturas/Serviços"
+  },
+  {
+    "id": 1,
+    "nome": "Alimentação"
+  }
+]
