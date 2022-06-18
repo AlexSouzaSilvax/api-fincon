@@ -43,9 +43,8 @@ public class LancamentoService {
 		return lancamentoRespository.findById(id);
 	}
 
-	public String delete(Long id) {
+	public void delete(Long id) {
 		lancamentoRespository.deleteById(id);
-		return "Apagado com sucesso";
 	}
 
 	public Lancamento save(Lancamento pLancamento) {

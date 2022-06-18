@@ -93,9 +93,10 @@ public class LancamentoController {
 
 	@PostMapping
 	@RequestMapping("delete")
-	public ResponseEntity<Object> delete(@RequestParam Long id) {
+	public ResponseEntity<Object> delete(@RequestBody Long id) {
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(lancamentoService.delete(id));
+			lancamentoService.delete(id);
+			return ResponseEntity.status(HttpStatus.OK).body(null);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
