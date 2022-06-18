@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fincon.enums.Categoria;
 import com.fincon.enums.TipoLancamento;
 import com.fincon.enums.TipoPagamento;
 
@@ -30,7 +31,7 @@ public class Lancamento {
 	private TipoLancamento tipoLancamento;
 
 	@Column(name = "categoria", nullable = false, length = 9999)
-	private String categoria;
+	private Categoria categoria;
 
 	@Column(name = "descricao", nullable = false, length = 9999)
 	private String descricao;
