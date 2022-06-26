@@ -146,21 +146,29 @@ public class LancamentoService {
 		if (novoMesReferencia == 2) {
 			if (pLancamento.getDataVencimento().getDayOfMonth() >= 29
 					|| pLancamento.getDataPrevistaPagamento().getDayOfMonth() >= 29) {
-				lancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
-						pLancamento.getDataPrevistaPagamento().getHour(),
-						pLancamento.getDataPrevistaPagamento().getMinute()));
-				lancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
+				if (lancamento.getDataVencimento() != null) {
+					lancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
+							pLancamento.getDataPrevistaPagamento().getHour(),
+							pLancamento.getDataPrevistaPagamento().getMinute()));
+				}
+				if (lancamento.getDataPrevistaPagamento() != null) {
+					lancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
+							pLancamento.getDataPrevistaPagamento().getHour(),
+							pLancamento.getDataPrevistaPagamento().getMinute()));
+				}
+			}
+		} else {
+			if (lancamento.getDataVencimento() != null) {
+				lancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia,
+						pLancamento.getDataVencimento().getDayOfMonth(), pLancamento.getDataVencimento().getHour(),
+						pLancamento.getDataVencimento().getMinute()));
+			}
+			if (lancamento.getDataPrevistaPagamento() != null) {
+				lancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia,
+						pLancamento.getDataPrevistaPagamento().getDayOfMonth(),
 						pLancamento.getDataPrevistaPagamento().getHour(),
 						pLancamento.getDataPrevistaPagamento().getMinute()));
 			}
-		} else {
-			lancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia,
-					pLancamento.getDataVencimento().getDayOfMonth(), pLancamento.getDataVencimento().getHour(),
-					pLancamento.getDataVencimento().getMinute()));
-			lancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia,
-					pLancamento.getDataPrevistaPagamento().getDayOfMonth(),
-					pLancamento.getDataPrevistaPagamento().getHour(),
-					pLancamento.getDataPrevistaPagamento().getMinute()));
 		}
 		lancamento.setMesReferencia(novoMesReferencia);
 		lancamento.setAnoReferencia(novoAnoReferencia);
@@ -172,6 +180,7 @@ public class LancamentoService {
 		lancamento.setQuantidadeParcelas(pLancamento.getQuantidadeParcelas());
 		lancamento.setDataLancamento(pLancamento.getDataLancamento());
 		lancamento.setDescricao(pLancamento.getDescricao());
+		lancamento.setCategoria(pLancamento.getCategoria());
 		lancamento.setObservacao(pLancamento.getObservacao());
 		return lancamento;
 	}
