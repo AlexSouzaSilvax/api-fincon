@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.fincon.dto.LancamentoDTO;
+import com.fincon.enums.Categoria;
 import com.fincon.enums.TipoPagamento;
 import com.fincon.model.Lancamento;
 import com.fincon.repository.LancamentoRepository;
@@ -33,13 +34,13 @@ public class LancamentoService {
 
 	public List<LancamentoDTO> findListMain(int pMesReferencia, int pAnoReferencia) {
 		List<LancamentoDTO> listaLancamentoDTO = new ArrayList<>();
-		for (Lancamento pLancamento : lancamentoRespository.findfindListMain(pMesReferencia, pAnoReferencia)) {
+		for (Lancamento pLancamento : lancamentoRespository.findListMain(pMesReferencia, pAnoReferencia)) {
 			listaLancamentoDTO.add(new LancamentoDTO(pLancamento));
 		}
 		return listaLancamentoDTO;
 	}
 
-	public Optional<Lancamento> findById(Long id) {
+	public Object findById(Long id) {
 		return lancamentoRespository.findById(id);
 	}
 
@@ -76,6 +77,23 @@ public class LancamentoService {
 		}
 
 		return lancamentoRespository.save(pLancamento);
+	}
+
+	public void update(LancamentoDTO pLancamento) {
+		lancamentoRespository.updateAllById(pLancamento.getAnoReferencia(),
+				Integer.valueOf(pLancamento.getTipoLancamento()),
+				pLancamento.getDataPrevistaPagamento(),
+				pLancamento.getDataVencimento(),
+				pLancamento.getDescricao(),
+				pLancamento.isMensal(),
+				pLancamento.getMesReferencia(),
+				pLancamento.getObservacao(),
+				pLancamento.isPago(),
+				pLancamento.getQuantidadeParcelas(),
+				Integer.valueOf(pLancamento.getTipoLancamento()),
+				Integer.valueOf(pLancamento.getTipoPagamento()),
+				pLancamento.getValor(),
+				pLancamento.getId());		
 	}
 
 	private void saveLancamentosProxMensal(int pQuantidadedeMensal, Lancamento pLancamento) {
