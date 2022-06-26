@@ -1,5 +1,6 @@
 package com.fincon.controller;
 
+import com.fincon.dto.LancamentoDTO;
 import com.fincon.model.Lancamento;
 import com.fincon.model.ReturnError;
 import com.fincon.service.LancamentoService;
@@ -87,6 +88,22 @@ public class LancamentoController {
 					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
 							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
 							"/api/lancamento/create"));
+		}
+
+	}
+
+	@PostMapping
+	@RequestMapping("update")
+	public ResponseEntity<Object> update(@RequestBody LancamentoDTO pLancamentoDTO) {
+		try {
+			lancamentoService.update(pLancamentoDTO);
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(true);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
+							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
+							"/api/lancamento/update"));
 		}
 
 	}

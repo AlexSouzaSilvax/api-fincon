@@ -38,6 +38,34 @@ public class LancamentoDTO {
 
     private boolean pago;
 
+    private boolean mensal;
+    @Column(name = "mes_referencia", nullable = false)
+    @JsonProperty("mes_referencia")
+    private int mesReferencia;
+
+    @Column(name = "ano_referencia", nullable = false)
+    @JsonProperty("ano_referencia")
+    private int anoReferencia;
+
+    @Column(name = "observacao", length = 9999)
+    private String observacao;
+
+    @Column(name = "data_vencimento")
+    @JsonProperty("data_vencimento")
+    private LocalDateTime dataVencimento;
+
+    @Column(name = "data_prevista_pagamento")
+    @JsonProperty("data_prevista_pagamento")
+    private LocalDateTime dataPrevistaPagamento;
+
+    @Column(name = "quantidade_parcelas")
+    @JsonProperty("quantidade_parcelas")
+    private int quantidadeParcelas;
+
+    public LancamentoDTO() {
+
+    }
+
     public LancamentoDTO(Lancamento pLancamento) {
         this.id = pLancamento.getId();
         Categoria c = pLancamento.getCategoria();
@@ -50,5 +78,12 @@ public class LancamentoDTO {
         this.tipoLancamento = tL.getDescricao();
         this.dataLancamento = pLancamento.getDataLancamento();
         this.pago = pLancamento.isPago();
+        this.mensal = pLancamento.isMensal();
+        this.mesReferencia = pLancamento.getMesReferencia();
+        this.anoReferencia = pLancamento.getAnoReferencia();
+        this.observacao = pLancamento.getObservacao();
+        this.dataVencimento = pLancamento.getDataVencimento();
+        this.dataPrevistaPagamento = pLancamento.getDataPrevistaPagamento();
+        this.quantidadeParcelas = pLancamento.getQuantidadeParcelas();
     }
 }
