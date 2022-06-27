@@ -1,17 +1,16 @@
 package com.fincon.service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.fincon.Util.Util;
 import com.fincon.dto.LancamentoDTO;
-import com.fincon.enums.Categoria;
 import com.fincon.enums.TipoPagamento;
 import com.fincon.model.Lancamento;
+import com.fincon.model.Usuario;
 import com.fincon.repository.LancamentoRepository;
 
 import org.springframework.data.domain.Sort;
@@ -32,9 +31,9 @@ public class LancamentoService {
 		return lancamentoRespository.findAllOrderNumeroParcela();
 	}
 
-	public List<LancamentoDTO> findListMain(int pMesReferencia, int pAnoReferencia) {
+	public List<LancamentoDTO> findListMain(long idUsuario, int pMesReferencia, int pAnoReferencia) {
 		List<LancamentoDTO> listaLancamentoDTO = new ArrayList<>();
-		for (Lancamento pLancamento : lancamentoRespository.findListMain(pMesReferencia, pAnoReferencia)) {
+		for (Lancamento pLancamento : lancamentoRespository.findListMain(idUsuario, pMesReferencia, pAnoReferencia)) {
 			listaLancamentoDTO.add(new LancamentoDTO(pLancamento));
 		}
 		return listaLancamentoDTO;
@@ -48,14 +47,15 @@ public class LancamentoService {
 		lancamentoRespository.deleteById(id);
 	}
 
-	public Lancamento save(Lancamento pLancamento) {
+	public Lancamento save(Long idUsuario, Lancamento pLancamento) {
+		pLancamento.setUsuario(new Usuario(idUsuario));
 
 		if (pLancamento.getId() == null) {
-			pLancamento.setDataLancamento(dataAtual());
+			pLancamento.setDataLancamento(Util.dataAtual());
 		}
 
 		if (pLancamento.isPago()) {
-			pLancamento.setDataPagamento(dataAtual());
+			pLancamento.setDataPagamento(Util.dataAtual());
 		}
 
 		// quando for mensal
@@ -93,7 +93,7 @@ public class LancamentoService {
 				Integer.valueOf(pLancamento.getTipoLancamento()),
 				Integer.valueOf(pLancamento.getTipoPagamento()),
 				pLancamento.getValor(),
-				pLancamento.getId());		
+				pLancamento.getId());
 	}
 
 	private void saveLancamentosProxMensal(int pQuantidadedeMensal, Lancamento pLancamento) {
@@ -150,14 +150,6 @@ public class LancamentoService {
 		return novo;
 	}
 
-	// salva lancamentos parcela
-	private void saveLancamentoParcelas(int i, Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
-		Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);
-		lancamento.setDescricao(pLancamento.getDescricao() + " " + i + "/" + pLancamento.getQuantidadeParcelas());
-		lancamento.setNumeroParcela(i);
-		lancamentoRespository.save(lancamento);
-	}
-
 	private Lancamento manipulaDadosLancamento(Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		Lancamento lancamento = new Lancamento();
 		// trata mes fevereiro
@@ -200,10 +192,15 @@ public class LancamentoService {
 		lancamento.setDescricao(pLancamento.getDescricao());
 		lancamento.setCategoria(pLancamento.getCategoria());
 		lancamento.setObservacao(pLancamento.getObservacao());
+		lancamento.setUsuario(pLancamento.getUsuario());
 		return lancamento;
 	}
 
-	private LocalDateTime dataAtual() {
-		return LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
+	// salva lancamentos parcela
+	private void saveLancamentoParcelas(int i, Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
+		Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);
+		lancamento.setDescricao(pLancamento.getDescricao() + " " + i + "/" + pLancamento.getQuantidadeParcelas());
+		lancamento.setNumeroParcela(i);
+		lancamentoRespository.save(lancamento);
 	}
 }
