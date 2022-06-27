@@ -1,15 +1,13 @@
 package com.fincon.service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.fincon.Util.Util;
 import com.fincon.dto.LancamentoDTO;
-import com.fincon.enums.Categoria;
 import com.fincon.enums.TipoPagamento;
 import com.fincon.model.Lancamento;
 import com.fincon.repository.LancamentoRepository;
@@ -51,11 +49,11 @@ public class LancamentoService {
 	public Lancamento save(Lancamento pLancamento) {
 
 		if (pLancamento.getId() == null) {
-			pLancamento.setDataLancamento(dataAtual());
+			pLancamento.setDataLancamento(Util.dataAtual());
 		}
 
 		if (pLancamento.isPago()) {
-			pLancamento.setDataPagamento(dataAtual());
+			pLancamento.setDataPagamento(Util.dataAtual());
 		}
 
 		// quando for mensal
@@ -93,7 +91,7 @@ public class LancamentoService {
 				Integer.valueOf(pLancamento.getTipoLancamento()),
 				Integer.valueOf(pLancamento.getTipoPagamento()),
 				pLancamento.getValor(),
-				pLancamento.getId());		
+				pLancamento.getId());
 	}
 
 	private void saveLancamentosProxMensal(int pQuantidadedeMensal, Lancamento pLancamento) {
@@ -203,7 +201,4 @@ public class LancamentoService {
 		return lancamento;
 	}
 
-	private LocalDateTime dataAtual() {
-		return LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
-	}
 }
