@@ -38,4 +38,10 @@ public class Usuario {
 	@JsonProperty("data_criacao")
 	private LocalDateTime dataCriacao;
 
+	public Usuario() {
+	}
+
+	public Usuario(Long pId) {
+		this.id = pId;
+	}
 }
