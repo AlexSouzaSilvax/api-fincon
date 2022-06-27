@@ -62,6 +62,8 @@ public class LancamentoDTO {
     @JsonProperty("quantidade_parcelas")
     private int quantidadeParcelas;
 
+    private Long usuario;
+
     public LancamentoDTO() {
 
     }
@@ -85,5 +87,6 @@ public class LancamentoDTO {
         this.dataVencimento = pLancamento.getDataVencimento();
         this.dataPrevistaPagamento = pLancamento.getDataPrevistaPagamento();
         this.quantidadeParcelas = pLancamento.getQuantidadeParcelas();
+        this.usuario = pLancamento.getUsuario().getId();
     }
 }
