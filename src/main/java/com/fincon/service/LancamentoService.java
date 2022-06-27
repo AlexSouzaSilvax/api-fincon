@@ -47,8 +47,8 @@ public class LancamentoService {
 		lancamentoRespository.deleteById(id);
 	}
 
-	public Lancamento save(Long idUsuario, Lancamento pLancamento) {		
-		pLancamento.setUsuario((Usuario) findById(idUsuario));
+	public Lancamento save(Long idUsuario, Lancamento pLancamento) {
+		pLancamento.setUsuario(new Usuario(idUsuario));
 
 		if (pLancamento.getId() == null) {
 			pLancamento.setDataLancamento(Util.dataAtual());
@@ -79,7 +79,7 @@ public class LancamentoService {
 		return lancamentoRespository.save(pLancamento);
 	}
 
-	public void update(LancamentoDTO pLancamento) {				
+	public void update(LancamentoDTO pLancamento) {
 		lancamentoRespository.updateAllById(pLancamento.getAnoReferencia(),
 				Integer.valueOf(pLancamento.getTipoLancamento()),
 				pLancamento.getDataPrevistaPagamento(),
@@ -150,14 +150,6 @@ public class LancamentoService {
 		return novo;
 	}
 
-	// salva lancamentos parcela
-	private void saveLancamentoParcelas(int i, Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
-		Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);
-		lancamento.setDescricao(pLancamento.getDescricao() + " " + i + "/" + pLancamento.getQuantidadeParcelas());
-		lancamento.setNumeroParcela(i);
-		lancamentoRespository.save(lancamento);
-	}
-
 	private Lancamento manipulaDadosLancamento(Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		Lancamento lancamento = new Lancamento();
 		// trata mes fevereiro
@@ -204,4 +196,11 @@ public class LancamentoService {
 		return lancamento;
 	}
 
+	// salva lancamentos parcela
+	private void saveLancamentoParcelas(int i, Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
+		Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);
+		lancamento.setDescricao(pLancamento.getDescricao() + " " + i + "/" + pLancamento.getQuantidadeParcelas());
+		lancamento.setNumeroParcela(i);
+		lancamentoRespository.save(lancamento);
+	}
 }
