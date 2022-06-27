@@ -10,6 +10,7 @@ import com.fincon.Util.Util;
 import com.fincon.dto.LancamentoDTO;
 import com.fincon.enums.TipoPagamento;
 import com.fincon.model.Lancamento;
+import com.fincon.model.Usuario;
 import com.fincon.repository.LancamentoRepository;
 
 import org.springframework.data.domain.Sort;
@@ -30,9 +31,9 @@ public class LancamentoService {
 		return lancamentoRespository.findAllOrderNumeroParcela();
 	}
 
-	public List<LancamentoDTO> findListMain(int pMesReferencia, int pAnoReferencia) {
+	public List<LancamentoDTO> findListMain(long idUsuario, int pMesReferencia, int pAnoReferencia) {
 		List<LancamentoDTO> listaLancamentoDTO = new ArrayList<>();
-		for (Lancamento pLancamento : lancamentoRespository.findListMain(pMesReferencia, pAnoReferencia)) {
+		for (Lancamento pLancamento : lancamentoRespository.findListMain(idUsuario, pMesReferencia, pAnoReferencia)) {
 			listaLancamentoDTO.add(new LancamentoDTO(pLancamento));
 		}
 		return listaLancamentoDTO;
@@ -46,7 +47,8 @@ public class LancamentoService {
 		lancamentoRespository.deleteById(id);
 	}
 
-	public Lancamento save(Lancamento pLancamento) {
+	public Lancamento save(Long idUsuario, Lancamento pLancamento) {		
+		pLancamento.setUsuario((Usuario) findById(idUsuario));
 
 		if (pLancamento.getId() == null) {
 			pLancamento.setDataLancamento(Util.dataAtual());
@@ -77,7 +79,7 @@ public class LancamentoService {
 		return lancamentoRespository.save(pLancamento);
 	}
 
-	public void update(LancamentoDTO pLancamento) {
+	public void update(LancamentoDTO pLancamento) {				
 		lancamentoRespository.updateAllById(pLancamento.getAnoReferencia(),
 				Integer.valueOf(pLancamento.getTipoLancamento()),
 				pLancamento.getDataPrevistaPagamento(),
@@ -198,6 +200,7 @@ public class LancamentoService {
 		lancamento.setDescricao(pLancamento.getDescricao());
 		lancamento.setCategoria(pLancamento.getCategoria());
 		lancamento.setObservacao(pLancamento.getObservacao());
+		lancamento.setUsuario(pLancamento.getUsuario());
 		return lancamento;
 	}
 
