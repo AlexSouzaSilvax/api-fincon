@@ -81,7 +81,7 @@ public class LancamentoService {
 
 	public void update(LancamentoDTO pLancamento) {
 		lancamentoRespository.updateAllById(pLancamento.getAnoReferencia(),
-				Integer.valueOf(pLancamento.getTipoLancamento()),
+				Integer.valueOf(pLancamento.getCategoria()),
 				pLancamento.getDataPrevistaPagamento(),
 				pLancamento.getDataVencimento(),
 				pLancamento.getDescricao(),
