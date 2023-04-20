@@ -28,6 +28,9 @@ public class Usuario {
 	@Column(name = "email", length = 9999)
 	private String email;
 
+	@Column(name = "celular", length = 9999)
+	private String celular;
+
 	@Column(name = "login", length = 9999)
 	private String login;
 

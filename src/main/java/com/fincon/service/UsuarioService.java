@@ -23,6 +23,10 @@ public class UsuarioService {
 		return usuarioRespository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 	}
 
+	public Object findById(Long id) {
+		return usuarioRespository.findById(id);
+	}
+
 	public Usuario access(UsuarioAccessDTO pUsuario) {
 		return usuarioRespository.access(pUsuario.getLogin(), pUsuario.getSenha());
 	}
