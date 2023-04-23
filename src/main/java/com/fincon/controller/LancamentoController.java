@@ -65,9 +65,11 @@ public class LancamentoController {
 
 	@GetMapping
 	@RequestMapping("find-list-main")
-	public ResponseEntity<Object> findListMain(@RequestParam("id_usuario") Long idUsuario, @RequestParam("mes_referencia") int pMesReferencia,
-			@RequestParam("ano_referencia") int pAnoReferencia) {				
+	public ResponseEntity<Object> findListMain(@RequestParam("id_usuario") Long idUsuario,
+			@RequestParam("mes_referencia") int pMesReferencia,
+			@RequestParam("ano_referencia") int pAnoReferencia) {
 		try {
+			lancamentoService.insereSaldoMesSeguinte(idUsuario, pMesReferencia, pAnoReferencia);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(lancamentoService.findListMain(idUsuario, pMesReferencia, pAnoReferencia));
 		} catch (Exception e) {
@@ -80,7 +82,8 @@ public class LancamentoController {
 
 	@PostMapping
 	@RequestMapping("create")
-	public ResponseEntity<Object> create(@RequestParam("id_usuario") long idUsuario, @RequestBody Lancamento pLancamento) {
+	public ResponseEntity<Object> create(@RequestParam("id_usuario") long idUsuario,
+			@RequestBody Lancamento pLancamento) {
 		try {
 			return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoService.save(idUsuario, pLancamento));
 		} catch (Exception e) {

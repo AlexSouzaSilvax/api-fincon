@@ -19,9 +19,6 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long> {
 	@Query(value = "select * from lancamento l order by l.numero_parcela", nativeQuery = true)
 	List<Lancamento> findAllOrderNumeroParcela();
 
-	// @Query(value = "select id, descricao, valor, tipo_pagamento, tipo_lancamento,
-	// data_lancamento, pago from lancamento where mes_referencia = :pMesReferencia
-	// and ano_referencia = :pAnoReferencia order by 1 desc", nativeQuery = true)
 	@Query(value = "select * from lancamento where id_usuario = :pIdUsuario and mes_referencia = :pMesReferencia and ano_referencia = :pAnoReferencia order by 1 desc", nativeQuery = true)
 	List<Lancamento> findListMain(
 			@Param("pIdUsuario") long pIdUsuario,
@@ -46,4 +43,12 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long> {
 			@Param("pTipoPagamento") int pTipoPagamento,
 			@Param("pValor") BigDecimal pValor,
 			@Param("pId") Long pId);
+
+	@Query(value = "SELECT * FROM lancamento WHERE id_usuario = :pIdUsuario AND mes_referencia = :pMesReferencia AND ano_referencia = :pAnoReferencia AND descricao = 'Saldo do Mês Anterior'", nativeQuery = true)
+	List<Lancamento> findByLancamentoSaldoMesAnterior(@Param("pIdUsuario") long pIdUsuario,
+			@Param("pMesReferencia") int pMesReferencia,
+			@Param("pAnoReferencia") int pAnoReferencia);
+
+	@Query(value = "select ( (SELECT SUM(valor) FROM lancamento WHERE id_usuario = :pIdUsuario AND mes_referencia = :pMesReferencia AND ano_referencia = :pAnoReferencia and tipo_lancamento = 0 AND pago = true) - (SELECT SUM(valor) FROM lancamento WHERE id_usuario = :pIdUsuario AND mes_referencia = :pMesReferencia AND ano_referencia = :pAnoReferencia and tipo_lancamento = 1 AND pago = true) ) as saldo", nativeQuery = true)
+	String buscaTotalLancamentoPorMes(long pIdUsuario, int pMesReferencia, int pAnoReferencia);
 }
