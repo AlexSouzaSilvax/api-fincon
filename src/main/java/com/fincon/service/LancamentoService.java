@@ -67,29 +67,19 @@ public class LancamentoService {
 		// Trata caso seja novo ano
 		int mesSeguinte = pMesReferencia + 1;
 		if (mesSeguinte > 12) {
-			//System.out.println("Caiu aqui");
+			// System.out.println("Caiu aqui");
 			mesSeguinte = 1;
 			pAnoReferencia += 1;
 		}
-		Calendar instance = Calendar.getInstance();
-		instance.set(Calendar.MONTH, (pMesReferencia - 1));
-		instance.set(Calendar.DAY_OF_MONTH, instance.getActualMaximum(Calendar.DAY_OF_MONTH));
 		// ultimo dia do mes
-		int ultimoDiaMes = instance.getTime().getDate();
-		// System.out.println("Ultimo dia do mes " + pMesReferencia + " é: " +
-		// ultimoDiaMes);
+		int ultimoDiaMes = ultimoDiaMes(pMesReferencia);
 		LocalDateTime hoje = Util.dataAtual();
 		// verifica se hoje é o ultimo dia do mes
 		if (ultimoDiaMes == hoje.getDayOfMonth()) {
-		//	 if (ultimoDiaMes == 30) {
-			// System.out.println("Hoje é o ultimo dia do mês.");
-			// System.out.println("mesSeguinte: " + mesSeguinte);
-			// System.out.println("pAnoReferencia: " + pAnoReferencia);
 			// verifica se exite o lançamento saldoMesAnterior já criado
 			List<Lancamento> listaLancamentos = this.lancamentoRespository.findByLancamentoSaldoMesAnterior(idUsuario,
 					mesSeguinte, pAnoReferencia);
 			if (listaLancamentos.isEmpty()) {
-				// System.out.println("Não Existe");
 				// criar lancamento
 				try {
 					Lancamento novoLancamentoSaldoMesAnterior = new Lancamento();
@@ -232,33 +222,29 @@ public class LancamentoService {
 	private Lancamento manipulaDadosLancamento(Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		Lancamento lancamento = new Lancamento();
 		// trata mes fevereiro
-		if (novoMesReferencia == 2) {
-			if (pLancamento.getDataVencimento().getDayOfMonth() >= 29
-					|| pLancamento.getDataPrevistaPagamento().getDayOfMonth() >= 29) {
-				if (lancamento.getDataVencimento() != null) {
-					lancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
-							pLancamento.getDataPrevistaPagamento().getHour(),
-							pLancamento.getDataPrevistaPagamento().getMinute()));
-				}
-				if (lancamento.getDataPrevistaPagamento() != null) {
-					lancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
-							pLancamento.getDataPrevistaPagamento().getHour(),
-							pLancamento.getDataPrevistaPagamento().getMinute()));
-				}
-			}
+		if (novoMesReferencia == 2 && ultimoDiaMes(novoMesReferencia) == 28) {
+			lancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
+					pLancamento.getDataPrevistaPagamento().getHour(),
+					pLancamento.getDataPrevistaPagamento().getMinute()));
+
+			lancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
+					pLancamento.getDataPrevistaPagamento().getHour(),
+					pLancamento.getDataPrevistaPagamento().getMinute()));
+
 		} else {
-			if (lancamento.getDataVencimento() != null) {
+			if (pLancamento.getDataVencimento() != null) {
 				lancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia,
 						pLancamento.getDataVencimento().getDayOfMonth(), pLancamento.getDataVencimento().getHour(),
 						pLancamento.getDataVencimento().getMinute()));
 			}
-			if (lancamento.getDataPrevistaPagamento() != null) {
+			if (pLancamento.getDataPrevistaPagamento() != null) {
 				lancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia,
 						pLancamento.getDataPrevistaPagamento().getDayOfMonth(),
 						pLancamento.getDataPrevistaPagamento().getHour(),
 						pLancamento.getDataPrevistaPagamento().getMinute()));
 			}
 		}
+
 		lancamento.setMesReferencia(novoMesReferencia);
 		lancamento.setAnoReferencia(novoAnoReferencia);
 		lancamento.setTipoLancamento(pLancamento.getTipoLancamento());
@@ -292,5 +278,13 @@ public class LancamentoService {
 			// System.out.println("Saldo do mes anterior vazio.");
 		}
 		return saldo;
+	}
+
+	private int ultimoDiaMes(int pMesReferencia) {
+		Calendar instance = Calendar.getInstance();
+		instance.set(Calendar.MONTH, (pMesReferencia - 1));
+		instance.set(Calendar.DAY_OF_MONTH, instance.getActualMaximum(Calendar.DAY_OF_MONTH));
+		// ultimo dia do mes
+		return instance.getTime().getDate();
 	}
 }
