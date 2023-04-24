@@ -25,6 +25,11 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, Long> {
 			@Param("pMesReferencia") int pMesReferencia,
 			@Param("pAnoReferencia") int pAnoReferencia);
 
+			@Query(value = "select * from lancamento where id_usuario = :pIdUsuario and ano_referencia = :pAnoReferencia order by 1 desc", nativeQuery = true)
+	List<Lancamento> findListMain(
+			@Param("pIdUsuario") long pIdUsuario,
+			@Param("pAnoReferencia") int pAnoReferencia);
+
 	@Transactional
 	@Modifying(clearAutomatically = true)
 	@Query(value = "update lancamento set ano_referencia = :pAnoReferencia, categoria = :pCategoria, data_prevista_pagamento = :pDataPrevistaPagamento, data_vencimento = :pDataVencimento, descricao = :pDescricao, mensal = :pMensal, mes_referencia = :pMesReferencia, observacao = :pObservacao, pago = :pPago, quantidade_parcelas = :pQuantidadeParcelas, tipo_lancamento = :pTipoLancamento, tipo_pagamento = :pTipoPagamento, valor = :pValor where id = :pId", nativeQuery = true)

@@ -36,8 +36,27 @@ public class LancamentoService {
 	}
 
 	public List<LancamentoDTO> findListMain(long idUsuario, int pMesReferencia, int pAnoReferencia) {
+		List<Lancamento> listaLancamentos = new ArrayList<>();
 		List<LancamentoDTO> listaLancamentoDTO = new ArrayList<>();
-		for (Lancamento pLancamento : lancamentoRespository.findListMain(idUsuario, pMesReferencia, pAnoReferencia)) {
+
+		if (pMesReferencia == 0) {
+			listaLancamentos = lancamentoRespository.findListMain(idUsuario, pAnoReferencia);
+		} else {
+			this.insereSaldoMesSeguinte(idUsuario, pMesReferencia, pAnoReferencia);
+			listaLancamentos = lancamentoRespository.findListMain(idUsuario, pMesReferencia,
+					pAnoReferencia);
+		}
+
+		for (Lancamento pLancamento : listaLancamentos) {
+			listaLancamentoDTO.add(new LancamentoDTO(pLancamento));
+		}
+
+		return listaLancamentoDTO;
+	}
+
+	public List<LancamentoDTO> findListMain(long idUsuario, int pAnoReferencia) {
+		List<LancamentoDTO> listaLancamentoDTO = new ArrayList<>();
+		for (Lancamento pLancamento : lancamentoRespository.findListMain(idUsuario, pAnoReferencia)) {
 			listaLancamentoDTO.add(new LancamentoDTO(pLancamento));
 		}
 		return listaLancamentoDTO;
@@ -48,7 +67,7 @@ public class LancamentoService {
 		// Trata caso seja novo ano
 		int mesSeguinte = pMesReferencia + 1;
 		if (mesSeguinte > 12) {
-			System.out.println("Caiu aqui");
+			//System.out.println("Caiu aqui");
 			mesSeguinte = 1;
 			pAnoReferencia += 1;
 		}
@@ -62,7 +81,7 @@ public class LancamentoService {
 		LocalDateTime hoje = Util.dataAtual();
 		// verifica se hoje é o ultimo dia do mes
 		if (ultimoDiaMes == hoje.getDayOfMonth()) {
-			// if (ultimoDiaMes == ultimoDiaMes) {
+		//	 if (ultimoDiaMes == 30) {
 			// System.out.println("Hoje é o ultimo dia do mês.");
 			// System.out.println("mesSeguinte: " + mesSeguinte);
 			// System.out.println("pAnoReferencia: " + pAnoReferencia);

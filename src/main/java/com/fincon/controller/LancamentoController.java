@@ -69,9 +69,9 @@ public class LancamentoController {
 			@RequestParam("mes_referencia") int pMesReferencia,
 			@RequestParam("ano_referencia") int pAnoReferencia) {
 		try {
-			lancamentoService.insereSaldoMesSeguinte(idUsuario, pMesReferencia, pAnoReferencia);
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(lancamentoService.findListMain(idUsuario, pMesReferencia, pAnoReferencia));
+					.body(lancamentoService.findListMain(idUsuario, pMesReferencia,
+							pAnoReferencia));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
