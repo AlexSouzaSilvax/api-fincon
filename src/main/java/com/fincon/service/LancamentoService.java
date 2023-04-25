@@ -264,6 +264,7 @@ public class LancamentoService {
 	// salva lancamentos parcela
 	private void saveLancamentoParcelas(int i, Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);
+		lancamento.setPago(false);
 		lancamento.setDescricao(pLancamento.getDescricao() + " " + i + "/" + pLancamento.getQuantidadeParcelas());
 		lancamento.setNumeroParcela(i);
 		lancamentoRespository.save(lancamento);
