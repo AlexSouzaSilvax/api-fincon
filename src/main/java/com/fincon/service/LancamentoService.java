@@ -75,7 +75,8 @@ public class LancamentoService {
 		int ultimoDiaMes = ultimoDiaMes(pMesReferencia);
 		LocalDateTime hoje = Util.dataAtual();
 		// verifica se hoje é o ultimo dia do mes
-		if (ultimoDiaMes == hoje.getDayOfMonth()) {
+		// if (ultimoDiaMes == hoje.getDayOfMonth()) {
+		if (hoje.getDayOfMonth() == 1 || hoje.getDayOfMonth() == 01) {
 			// verifica se exite o lançamento saldoMesAnterior já criado
 			List<Lancamento> listaLancamentos = this.lancamentoRespository.findByLancamentoSaldoMesAnterior(idUsuario,
 					mesSeguinte, pAnoReferencia);
