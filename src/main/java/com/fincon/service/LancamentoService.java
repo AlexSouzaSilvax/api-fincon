@@ -63,7 +63,8 @@ public class LancamentoService {
 	}
 
 	public void insereSaldoMesSeguinte(long idUsuario, int pMesReferencia, int pAnoReferencia) {
-		// System.out.println("\n\n");
+		System.out.println("\n\n<=============================================================>\n\n");
+		System.out.println("  * Insere saldo do mes anterior no mes atual *  ");
 		// Trata caso seja novo ano
 		int mesSeguinte = pMesReferencia + 1;
 		if (mesSeguinte > 12) {
@@ -76,12 +77,14 @@ public class LancamentoService {
 		LocalDateTime hoje = Util.dataAtual();
 		// verifica se hoje é o ultimo dia do mes
 		// if (ultimoDiaMes == hoje.getDayOfMonth()) {
-		//System.out.println("HOJE: " + hoje.getDayOfMonth());
+		System.out.println("HOJE: " + hoje.getDayOfMonth());
 		if (hoje.getDayOfMonth() == 1) {
+			System.out.println("HOJE é dia 1");
 			// verifica se exite o lançamento saldoMesAnterior já criado
 			List<Lancamento> listaLancamentos = this.lancamentoRespository.findByLancamentoSaldoMesAnterior(idUsuario,
 					mesSeguinte, pAnoReferencia);
-			if (listaLancamentos.size() == 0) {
+			if (listaLancamentos.size() == 0) { // nenhum lancamento criado
+				System.out.println("Não existem lançamento criado, criando...");
 				// criar lancamento
 				try {
 					Lancamento novoLancamentoSaldoMesAnterior = new Lancamento();
@@ -101,13 +104,14 @@ public class LancamentoService {
 							.setValor(buscaTotalLancamentoPorMesAno(idUsuario, pMesReferencia, pAnoReferencia));
 					save(idUsuario, novoLancamentoSaldoMesAnterior);
 				} catch (Exception e) {
-					// System.out.println("Erro ao salvar: " + e);
+					System.out.println("Erro ao salvar: " + e);
 				}
-				// System.out.println("Salvo com sucesso");
+				System.out.println("Salvo com sucesso");
 			} else {
-				// System.out.println("Já existe");
+				System.out.println("Já existe");
 			}
 		}
+		System.out.println("\n\n<=============================================================>\n\n");
 	}
 
 	public Object findById(Long id) {
