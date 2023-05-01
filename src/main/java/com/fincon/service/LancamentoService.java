@@ -42,7 +42,7 @@ public class LancamentoService {
 		if (pMesReferencia == 0) {
 			listaLancamentos = lancamentoRespository.findListMain(idUsuario, pAnoReferencia);
 		} else {
-			this.insereSaldoMesSeguinte(idUsuario, pMesReferencia, pAnoReferencia);
+			this.insereSaldoMesAnterior(idUsuario, pMesReferencia, pAnoReferencia);
 			listaLancamentos = lancamentoRespository.findListMain(idUsuario, pMesReferencia,
 					pAnoReferencia);
 		}
@@ -62,35 +62,24 @@ public class LancamentoService {
 		return listaLancamentoDTO;
 	}
 
-	public void insereSaldoMesSeguinte(long idUsuario, int pMesReferencia, int pAnoReferencia) {
-		//System.out.println("\n\n<=============================================================>\n\n");
-		//System.out.println("  * Insere saldo do mes anterior no mes atual *  ");
-		// Trata caso seja novo ano
+	public void insereSaldoMesAnterior(long idUsuario, int pMesReferencia, int pAnoReferencia) {
 		int mesSeguinte = pMesReferencia + 1;
 		if (mesSeguinte > 12) {
-			// System.out.println("Caiu aqui");
-			mesSeguinte = 1;
+			pMesReferencia = 1;
 			pAnoReferencia += 1;
 		}
-		// ultimo dia do mes
-		int ultimoDiaMes = ultimoDiaMes(pMesReferencia);
 		LocalDateTime hoje = Util.dataAtual();
-		// verifica se hoje é o ultimo dia do mes
-		// if (ultimoDiaMes == hoje.getDayOfMonth()) {
-		//System.out.println("HOJE: " + hoje.getDayOfMonth());
-		if (hoje.getDayOfMonth() == 1) {
-			//System.out.println("HOJE é dia 1");
+		if (hoje.getDayOfMonth() == 1 && pMesReferencia == hoje.getMonthValue()) {
 			// verifica se exite o lançamento saldoMesAnterior já criado
 			List<Lancamento> listaLancamentos = this.lancamentoRespository.findByLancamentoSaldoMesAnterior(idUsuario,
-					mesSeguinte, pAnoReferencia);
+					pMesReferencia, pAnoReferencia);
 			if (listaLancamentos.size() == 0) { // nenhum lancamento criado
-				//System.out.println("Não existem lançamento criado, criando...");
 				// criar lancamento
 				try {
 					Lancamento novoLancamentoSaldoMesAnterior = new Lancamento();
 					novoLancamentoSaldoMesAnterior.setUsuario(new Usuario(idUsuario));
 					novoLancamentoSaldoMesAnterior.setAnoReferencia(pAnoReferencia);
-					novoLancamentoSaldoMesAnterior.setMesReferencia(mesSeguinte);
+					novoLancamentoSaldoMesAnterior.setMesReferencia(pMesReferencia);
 					novoLancamentoSaldoMesAnterior.setCategoria(Categoria.TRABALHO);
 					novoLancamentoSaldoMesAnterior.setDataPagamento(hoje);
 					novoLancamentoSaldoMesAnterior.setDataPrevistaPagamento(hoje);
@@ -101,17 +90,16 @@ public class LancamentoService {
 					novoLancamentoSaldoMesAnterior.setTipoLancamento(TipoLancamento.ENTRADA);
 					novoLancamentoSaldoMesAnterior.setTipoPagamento(TipoPagamento.PIX);
 					novoLancamentoSaldoMesAnterior
-							.setValor(buscaTotalLancamentoPorMesAno(idUsuario, pMesReferencia, pAnoReferencia));
+							.setValor(buscaTotalLancamentoPorMesAno(idUsuario, (pMesReferencia - 1), pAnoReferencia));
 					save(idUsuario, novoLancamentoSaldoMesAnterior);
 				} catch (Exception e) {
-					//System.out.println("Erro ao salvar: " + e);
+					// System.out.println("Erro ao salvar: " + e);
 				}
-				//System.out.println("Salvo com sucesso");
+				// System.out.println("Salvo com sucesso");
 			} else {
-				//System.out.println("Já existe");
+				// System.out.println("Já existe");
 			}
 		}
-		//System.out.println("\n\n<=============================================================>\n\n");
 	}
 
 	public Object findById(Long id) {
