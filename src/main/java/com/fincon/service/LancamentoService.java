@@ -1,13 +1,17 @@
 package com.fincon.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.fincon.Util.Util;
 import com.fincon.dto.LancamentoDTO;
+import com.fincon.enums.Categoria;
+import com.fincon.enums.TipoLancamento;
 import com.fincon.enums.TipoPagamento;
 import com.fincon.model.Lancamento;
 import com.fincon.model.Usuario;
@@ -32,11 +36,70 @@ public class LancamentoService {
 	}
 
 	public List<LancamentoDTO> findListMain(long idUsuario, int pMesReferencia, int pAnoReferencia) {
+		List<Lancamento> listaLancamentos = new ArrayList<>();
 		List<LancamentoDTO> listaLancamentoDTO = new ArrayList<>();
-		for (Lancamento pLancamento : lancamentoRespository.findListMain(idUsuario, pMesReferencia, pAnoReferencia)) {
+
+		if (pMesReferencia == 0) {
+			listaLancamentos = lancamentoRespository.findListMain(idUsuario, pAnoReferencia);
+		} else {
+			this.insereSaldoMesAnterior(idUsuario, pMesReferencia, pAnoReferencia);
+			listaLancamentos = lancamentoRespository.findListMain(idUsuario, pMesReferencia,
+					pAnoReferencia);
+		}
+
+		for (Lancamento pLancamento : listaLancamentos) {
+			listaLancamentoDTO.add(new LancamentoDTO(pLancamento));
+		}
+
+		return listaLancamentoDTO;
+	}
+
+	public List<LancamentoDTO> findListMain(long idUsuario, int pAnoReferencia) {
+		List<LancamentoDTO> listaLancamentoDTO = new ArrayList<>();
+		for (Lancamento pLancamento : lancamentoRespository.findListMain(idUsuario, pAnoReferencia)) {
 			listaLancamentoDTO.add(new LancamentoDTO(pLancamento));
 		}
 		return listaLancamentoDTO;
+	}
+
+	public void insereSaldoMesAnterior(long idUsuario, int pMesReferencia, int pAnoReferencia) {
+		int mesSeguinte = pMesReferencia + 1;
+		if (mesSeguinte > 12) {
+			pMesReferencia = 1;
+			pAnoReferencia += 1;
+		}
+		LocalDateTime hoje = Util.dataAtual();
+		if (hoje.getDayOfMonth() == 1 && pMesReferencia == hoje.getMonthValue()) {
+			// verifica se exite o lançamento saldoMesAnterior já criado
+			List<Lancamento> listaLancamentos = this.lancamentoRespository.findByLancamentoSaldoMesAnterior(idUsuario,
+					pMesReferencia, pAnoReferencia);
+			if (listaLancamentos.size() == 0) { // nenhum lancamento criado
+				// criar lancamento
+				try {
+					Lancamento novoLancamentoSaldoMesAnterior = new Lancamento();
+					novoLancamentoSaldoMesAnterior.setUsuario(new Usuario(idUsuario));
+					novoLancamentoSaldoMesAnterior.setAnoReferencia(pAnoReferencia);
+					novoLancamentoSaldoMesAnterior.setMesReferencia(pMesReferencia);
+					novoLancamentoSaldoMesAnterior.setCategoria(Categoria.TRABALHO);
+					novoLancamentoSaldoMesAnterior.setDataPagamento(hoje);
+					novoLancamentoSaldoMesAnterior.setDataPrevistaPagamento(hoje);
+					novoLancamentoSaldoMesAnterior.setDataVencimento(hoje);
+					novoLancamentoSaldoMesAnterior.setDescricao("Saldo do Mês Anterior");
+					novoLancamentoSaldoMesAnterior.setObservacao("Criado de forma automática pelo sistema.");
+					novoLancamentoSaldoMesAnterior.setPago(true);
+					novoLancamentoSaldoMesAnterior.setTipoLancamento(TipoLancamento.ENTRADA);
+					novoLancamentoSaldoMesAnterior.setTipoPagamento(TipoPagamento.PIX);
+					novoLancamentoSaldoMesAnterior
+							.setValor(buscaTotalLancamentoPorMesAno(idUsuario, (pMesReferencia - 1), pAnoReferencia));
+					save(idUsuario, novoLancamentoSaldoMesAnterior);
+				} catch (Exception e) {
+					// System.out.println("Erro ao salvar: " + e);
+				}
+				// System.out.println("Salvo com sucesso");
+			} else {
+				// System.out.println("Já existe");
+			}
+		}
 	}
 
 	public Object findById(Long id) {
@@ -153,33 +216,29 @@ public class LancamentoService {
 	private Lancamento manipulaDadosLancamento(Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		Lancamento lancamento = new Lancamento();
 		// trata mes fevereiro
-		if (novoMesReferencia == 2) {
-			if (pLancamento.getDataVencimento().getDayOfMonth() >= 29
-					|| pLancamento.getDataPrevistaPagamento().getDayOfMonth() >= 29) {
-				if (lancamento.getDataVencimento() != null) {
-					lancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
-							pLancamento.getDataPrevistaPagamento().getHour(),
-							pLancamento.getDataPrevistaPagamento().getMinute()));
-				}
-				if (lancamento.getDataPrevistaPagamento() != null) {
-					lancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
-							pLancamento.getDataPrevistaPagamento().getHour(),
-							pLancamento.getDataPrevistaPagamento().getMinute()));
-				}
-			}
+		if (novoMesReferencia == 2 && ultimoDiaMes(novoMesReferencia) == 28) {
+			lancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
+					pLancamento.getDataPrevistaPagamento().getHour(),
+					pLancamento.getDataPrevistaPagamento().getMinute()));
+
+			lancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia, 28,
+					pLancamento.getDataPrevistaPagamento().getHour(),
+					pLancamento.getDataPrevistaPagamento().getMinute()));
+
 		} else {
-			if (lancamento.getDataVencimento() != null) {
+			if (pLancamento.getDataVencimento() != null) {
 				lancamento.setDataVencimento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia,
 						pLancamento.getDataVencimento().getDayOfMonth(), pLancamento.getDataVencimento().getHour(),
 						pLancamento.getDataVencimento().getMinute()));
 			}
-			if (lancamento.getDataPrevistaPagamento() != null) {
+			if (pLancamento.getDataPrevistaPagamento() != null) {
 				lancamento.setDataPrevistaPagamento(LocalDateTime.of(novoAnoReferencia, novoMesReferencia,
 						pLancamento.getDataPrevistaPagamento().getDayOfMonth(),
 						pLancamento.getDataPrevistaPagamento().getHour(),
 						pLancamento.getDataPrevistaPagamento().getMinute()));
 			}
 		}
+
 		lancamento.setMesReferencia(novoMesReferencia);
 		lancamento.setAnoReferencia(novoAnoReferencia);
 		lancamento.setTipoLancamento(pLancamento.getTipoLancamento());
@@ -199,8 +258,28 @@ public class LancamentoService {
 	// salva lancamentos parcela
 	private void saveLancamentoParcelas(int i, Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);
+		lancamento.setPago(false);
 		lancamento.setDescricao(pLancamento.getDescricao() + " " + i + "/" + pLancamento.getQuantidadeParcelas());
 		lancamento.setNumeroParcela(i);
 		lancamentoRespository.save(lancamento);
+	}
+
+	private BigDecimal buscaTotalLancamentoPorMesAno(long idUsuario, int pMesReferencia, int pAnoReferencia) {
+		BigDecimal saldo = new BigDecimal(0);
+		try {
+			saldo = new BigDecimal(
+					this.lancamentoRespository.buscaTotalLancamentoPorMes(idUsuario, pMesReferencia, pAnoReferencia));
+		} catch (Exception e) {
+			// System.out.println("Saldo do mes anterior vazio.");
+		}
+		return saldo;
+	}
+
+	private int ultimoDiaMes(int pMesReferencia) {
+		Calendar instance = Calendar.getInstance();
+		instance.set(Calendar.MONTH, (pMesReferencia - 1));
+		instance.set(Calendar.DAY_OF_MONTH, instance.getActualMaximum(Calendar.DAY_OF_MONTH));
+		// ultimo dia do mes
+		return instance.getTime().getDate();
 	}
 }

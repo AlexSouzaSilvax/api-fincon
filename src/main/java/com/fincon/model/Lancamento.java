@@ -39,7 +39,7 @@ public class Lancamento {
 	@Column(name = "categoria", nullable = false, length = 9999)
 	private Categoria categoria;
 
-	@Column(name = "descricao", nullable = false, length = 9999)
+	@Column(name = "descricao", length = 9999)
 	private String descricao;
 
 	@Column(name = "valor", nullable = false)
@@ -79,7 +79,7 @@ public class Lancamento {
 	@JsonProperty("data_vencimento")
 	private LocalDateTime dataVencimento;
 
-	@Column(name = "data_prevista_pagamento")
+	@Column(name = "data_prevista_pagamento", nullable = false)
 	@JsonProperty("data_prevista_pagamento")
 	private LocalDateTime dataPrevistaPagamento;
 

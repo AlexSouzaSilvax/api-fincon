@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.AllArgsConstructor;
 
@@ -53,6 +54,19 @@ public class UsuarioController {
 					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
 							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
 							"/api/usuario/find-all"));
+		}
+	}
+
+	@GetMapping
+	@RequestMapping("find-by-id")
+	public ResponseEntity<Object> findById(@RequestParam("id") Long pId) {
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(usuarioService.findById(pId));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
+							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
+							"/api/usuario/findById"));
 		}
 	}
 
