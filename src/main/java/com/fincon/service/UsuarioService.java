@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.fincon.dto.UserDTO;
 import com.fincon.model.User;
 import com.fincon.repository.UserRepository;
 
@@ -16,26 +18,29 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UsuarioService {
 
-	private UserRepository UserRespository;
+	private UserRepository userRespository;
 
-	public List<User> findAll() {
-		return UserRespository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+	private UserDTO userDTO;
+
+	@Transactional
+	public List<UserDTO> findAll() {
+		return userDTO.UserToUserDTO(userRespository.findAll(Sort.by(Sort.Direction.DESC, "id")));
 	}
 
 	public Object findById(UUID id) {
-		return UserRespository.findById(id);
+		return userRespository.findById(id);
 	}
 
 	public User save(User pUser) {
-		//pUser.setDataCriacao(Util.dataAtual());
-		return UserRespository.save(pUser);
+		// pUser.setDataCriacao(Util.dataAtual());
+		return userRespository.save(pUser);
 	}
 
 	public User update(User pUser) {
-		return UserRespository.save(pUser);
+		return userRespository.save(pUser);
 	}
 
 	public void delete(UUID id) {
-		UserRespository.deleteById(id);
+		userRespository.deleteById(id);
 	}
 }
