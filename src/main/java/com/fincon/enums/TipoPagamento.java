@@ -4,6 +4,7 @@ public enum TipoPagamento {
 
 	DINHEIRO(0, "Dinheiro"), PIX(1, "Pix"), DEBITO(2, "Débito"), CREDITO(3, "Crédito"), BOLETO(4, "Boleto"), TED(5, "Transferência");
 
+	@SuppressWarnings("unused")
 	private int value;
 	private String descricao;
 

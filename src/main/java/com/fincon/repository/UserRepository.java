@@ -9,5 +9,5 @@ import com.fincon.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
- UserDetails findByLogin(String login);
+ UserDetails findByUsername(String username);
 }

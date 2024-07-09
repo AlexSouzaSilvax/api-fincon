@@ -1,5 +1,5 @@
 package com.fincon.dto;
 
-public record AuthenticationDTO(String login, String senha) {
+public record AuthenticationDTO(String username, String password) {
     
 }

@@ -25,6 +25,7 @@ public enum Categoria {
     COMBUSTIVEL(20, "Combustível"),
     POUPANCA(21, "Poupança");
 
+    @SuppressWarnings("unused")
     private int value;
     private String descricao;
 
