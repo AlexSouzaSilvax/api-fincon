@@ -85,10 +85,10 @@ public class LancamentoController {
 
 	@PostMapping
 	@RequestMapping("create")
-	public ResponseEntity<Object> create(@RequestParam("id_usuario") UUID idUsuario,
-			@RequestBody Lancamento pLancamento) {
+	public ResponseEntity<Object> create(@RequestBody Lancamento pLancamento) {
 		try {
-			return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoService.save(idUsuario, pLancamento));
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(lancamentoService.save(pLancamento.getUser().getId(), pLancamento));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,

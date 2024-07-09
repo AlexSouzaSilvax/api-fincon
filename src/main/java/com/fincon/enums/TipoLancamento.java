@@ -4,6 +4,7 @@ public enum TipoLancamento {
 
 	ENTRADA(0, "Entrada"), SAIDA(1, "Saída");
 
+	@SuppressWarnings("unused")
 	private int value;
 	private String descricao;
 

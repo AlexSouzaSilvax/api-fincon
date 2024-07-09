@@ -36,25 +36,25 @@ public class AuthorizationService implements UserDetailsService {
     private AuthenticationManager authenticationManager;
 
     @Override
-    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        return userRepository.findByLogin(login);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username);
     }
 
     public ResponseEntity<Object> login(@RequestBody @Valid AuthenticationDTO data) {
         authenticationManager = context.getBean(AuthenticationManager.class);
 
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.senha());
+        var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     public ResponseEntity<Object> register(@RequestBody RegisterDTO registerDTO) {
-        if (this.userRepository.findByLogin(registerDTO.login()) != null)
+        if (this.userRepository.findByUsername(registerDTO.username()) != null)
             return ResponseEntity.badRequest().build();
-        String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.senha());
+        String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
 
-        User newUser = new User(registerDTO.login(), encryptedPassword, registerDTO.role());
+        User newUser = new User(registerDTO.username(), encryptedPassword, registerDTO.role());
         newUser.setDataCriacao(new Date(System.currentTimeMillis()));
         this.userRepository.save(newUser);
         return ResponseEntity.ok().build();

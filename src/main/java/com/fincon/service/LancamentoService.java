@@ -64,6 +64,7 @@ public class LancamentoService {
 		return listaLancamentoDTO;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void insereSaldoMesAnterior(UUID idUsuario, int pMesReferencia, int pAnoReferencia) {
 		int mesSeguinte = pMesReferencia + 1;
 		if (mesSeguinte > 12) {
@@ -215,6 +216,7 @@ public class LancamentoService {
 		return novo;
 	}
 
+	@SuppressWarnings("deprecation")
 	private Lancamento manipulaDadosLancamento(Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		Lancamento lancamento = new Lancamento();
 		// trata mes fevereiro
@@ -277,6 +279,7 @@ public class LancamentoService {
 		return saldo;
 	}
 
+	@SuppressWarnings("deprecation")
 	private int ultimoDiaMes(int pMesReferencia) {
 		Calendar instance = Calendar.getInstance();
 		instance.set(Calendar.MONTH, (pMesReferencia - 1));

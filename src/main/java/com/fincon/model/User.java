@@ -44,11 +44,11 @@ public class User implements UserDetails {
 	@Column(name = "celular", length = 9999)
 	private String celular;
 
-	@Column(name = "login", length = 9999)
-	private String login;
+	@Column(name = "username", length = 9999)
+	private String username;
 
-	@Column(name = "senha", length = 9999)
-	private String senha;
+	@Column(name = "password", length = 9999)
+	private String password;
 
 	@Enumerated(EnumType.STRING)
 	private UserRole userRole;
@@ -69,12 +69,13 @@ public class User implements UserDetails {
 		this.id = pId;
 	}
 
-	public User(String login, String senha, UserRole userRole) {
-		this.login = login;
-		this.senha = senha;
+	public User(String username, String password, UserRole userRole) {
+		this.username = username;
+		this.password = password;
 		this.userRole = userRole;
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		if (this.userRole == userRole.ADMIN)
@@ -85,12 +86,12 @@ public class User implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		return senha;
+		return password;
 	}
 
 	@Override
 	public String getUsername() {
-		return login;
+		return username;
 	}
 
 	@Override
