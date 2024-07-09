@@ -4,6 +4,9 @@ import com.fincon.dto.LancamentoDTO;
 import com.fincon.model.Lancamento;
 import com.fincon.model.ReturnError;
 import com.fincon.service.LancamentoService;
+
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -52,7 +55,7 @@ public class LancamentoController {
 
 	@GetMapping
 	@RequestMapping("find-by-id")
-	public ResponseEntity<Object> findById(@RequestParam("id") Long pId) {
+	public ResponseEntity<Object> findById(@RequestParam("id") UUID pId) {
 		try {
 			return ResponseEntity.status(HttpStatus.OK).body(lancamentoService.findById(pId));
 		} catch (Exception e) {
@@ -65,7 +68,7 @@ public class LancamentoController {
 
 	@GetMapping
 	@RequestMapping("find-list-main")
-	public ResponseEntity<Object> findListMain(@RequestParam("id_usuario") Long idUsuario,
+	public ResponseEntity<Object> findListMain(@RequestParam("id_usuario") UUID idUsuario,
 			@RequestParam("mes_referencia") int pMesReferencia,
 			@RequestParam("ano_referencia") int pAnoReferencia) {
 		try {
@@ -82,7 +85,7 @@ public class LancamentoController {
 
 	@PostMapping
 	@RequestMapping("create")
-	public ResponseEntity<Object> create(@RequestParam("id_usuario") long idUsuario,
+	public ResponseEntity<Object> create(@RequestParam("id_usuario") UUID idUsuario,
 			@RequestBody Lancamento pLancamento) {
 		try {
 			return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoService.save(idUsuario, pLancamento));
@@ -113,7 +116,7 @@ public class LancamentoController {
 
 	@PostMapping
 	@RequestMapping("delete")
-	public ResponseEntity<Object> delete(@RequestBody Long id) {
+	public ResponseEntity<Object> delete(@RequestBody UUID id) {
 		try {
 			lancamentoService.delete(id);
 			return ResponseEntity.status(HttpStatus.OK).body(null);

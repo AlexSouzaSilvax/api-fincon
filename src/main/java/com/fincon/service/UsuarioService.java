@@ -1,13 +1,12 @@
 package com.fincon.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.fincon.Util.Util;
-import com.fincon.dto.UsuarioAccessDTO;
-import com.fincon.model.Usuario;
-import com.fincon.repository.UsuarioRepository;
+import com.fincon.model.User;
+import com.fincon.repository.UserRepository;
 
 import org.springframework.data.domain.Sort;
 
@@ -17,30 +16,26 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UsuarioService {
 
-	private UsuarioRepository usuarioRespository;
+	private UserRepository UserRespository;
 
-	public List<Usuario> findAll() {
-		return usuarioRespository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+	public List<User> findAll() {
+		return UserRespository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 	}
 
-	public Object findById(Long id) {
-		return usuarioRespository.findById(id);
+	public Object findById(UUID id) {
+		return UserRespository.findById(id);
 	}
 
-	public Usuario access(UsuarioAccessDTO pUsuario) {
-		return usuarioRespository.access(pUsuario.getLogin(), pUsuario.getSenha());
+	public User save(User pUser) {
+		//pUser.setDataCriacao(Util.dataAtual());
+		return UserRespository.save(pUser);
 	}
 
-	public Usuario save(Usuario pUsuario) {
-		pUsuario.setDataCriacao(Util.dataAtual());
-		return usuarioRespository.save(pUsuario);
+	public User update(User pUser) {
+		return UserRespository.save(pUser);
 	}
 
-	public Usuario update(Usuario pUsuario) {
-		return usuarioRespository.save(pUsuario);
-	}
-
-	public void delete(Long id) {
-		usuarioRespository.deleteById(id);
+	public void delete(UUID id) {
+		UserRespository.deleteById(id);
 	}
 }

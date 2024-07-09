@@ -1,16 +1,17 @@
 package com.fincon.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fincon.enums.Categoria;
@@ -26,11 +27,11 @@ public class Lancamento {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	
-	@ManyToOne
-    @JoinColumn(name="id_usuario", nullable=false)
-    private Usuario usuario;
+	private UUID id;
+
+	@ManyToOne()
+	@JoinColumn(name = "id_usuario", nullable = false)
+	private User user;
 
 	@Column(name = "tipo_lancamento", nullable = false)
 	@JsonProperty("tipo_lancamento")
@@ -73,19 +74,19 @@ public class Lancamento {
 
 	@Column(name = "data_lancamento", nullable = false)
 	@JsonProperty("data_lancamento")
-	private LocalDateTime dataLancamento;
+	private Date dataLancamento;
 
 	@Column(name = "data_vencimento")
 	@JsonProperty("data_vencimento")
-	private LocalDateTime dataVencimento;
+	private Date dataVencimento;
 
 	@Column(name = "data_prevista_pagamento", nullable = false)
 	@JsonProperty("data_prevista_pagamento")
-	private LocalDateTime dataPrevistaPagamento;
+	private Date dataPrevistaPagamento;
 
 	@Column(name = "data_pagamento")
 	@JsonProperty("data_pagamento")
-	private LocalDateTime dataPagamento;
+	private Date dataPagamento;
 
 	@Column(name = "observacao", length = 9999)
 	private String observacao;
