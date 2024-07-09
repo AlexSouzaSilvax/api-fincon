@@ -1,7 +1,9 @@
 package com.fincon.dto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -89,5 +91,15 @@ public class LancamentoDTO {
         this.dataPrevistaPagamento = pLancamento.getDataPrevistaPagamento();
         this.quantidadeParcelas = pLancamento.getQuantidadeParcelas();
         this.usuario = pLancamento.getUser().getId();
+    }
+
+    public List<LancamentoDTO> LancamentoToLancamentoDTO(List<Lancamento> pListLancamento) {
+        List<LancamentoDTO> listLancamentoDTO = new ArrayList<>();
+
+        for (int i = 0; i < pListLancamento.size(); i++) {
+            listLancamentoDTO.add(new LancamentoDTO(pListLancamento.get(i)));
+        }
+
+        return listLancamentoDTO;
     }
 }
