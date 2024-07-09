@@ -2,12 +2,11 @@ package com.fincon.controller;
 
 import com.fincon.dto.LancamentoDTO;
 import com.fincon.model.Lancamento;
-import com.fincon.model.ReturnError;
 import com.fincon.service.LancamentoService;
 
+import java.util.List;
 import java.util.UUID;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,43 +26,8 @@ public class LancamentoController {
 
 	@GetMapping
 	@RequestMapping("find-all")
-	public ResponseEntity<Object> findAll() {
-		try {
-			return ResponseEntity.status(HttpStatus.OK).body(lancamentoService.findAll());
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
-							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
-							"/api/lancamento/findAll"));
-		}
-
-	}
-
-	@GetMapping
-	@RequestMapping("find-all-order")
-	public ResponseEntity<Object> findAllOrderNumeroParcela() {
-		try {
-			return ResponseEntity.status(HttpStatus.OK).body(lancamentoService.findAllOrderNumeroParcela());
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
-							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
-							"/api/lancamento/findAllOrderNumeroParcela"));
-		}
-
-	}
-
-	@GetMapping
-	@RequestMapping("find-by-id")
-	public ResponseEntity<Object> findById(@RequestParam("id") UUID pId) {
-		try {
-			return ResponseEntity.status(HttpStatus.OK).body(lancamentoService.findById(pId));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
-							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
-							"/api/lancamento/findById"));
-		}
+	public ResponseEntity<List<LancamentoDTO>> findAll() {
+		return ResponseEntity.ok(lancamentoService.findAll());
 	}
 
 	@GetMapping
@@ -71,62 +35,21 @@ public class LancamentoController {
 	public ResponseEntity<Object> findListMain(@RequestParam("id_usuario") UUID idUsuario,
 			@RequestParam("mes_referencia") int pMesReferencia,
 			@RequestParam("ano_referencia") int pAnoReferencia) {
-		try {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(lancamentoService.findListMain(idUsuario, pMesReferencia,
-							pAnoReferencia));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
-							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
-							"/api/lancamento/findListMain"));
-		}
+		return ResponseEntity.ok(lancamentoService.findListMain(idUsuario, pMesReferencia, pAnoReferencia));
 	}
 
 	@PostMapping
 	@RequestMapping("create")
 	public ResponseEntity<Object> create(@RequestBody Lancamento pLancamento) {
-		try {
-			return ResponseEntity.status(HttpStatus.CREATED)
-					.body(lancamentoService.save(pLancamento.getUser().getId(), pLancamento));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
-							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
-							"/api/lancamento/create"));
-		}
-
-	}
-
-	@PostMapping
-	@RequestMapping("update")
-	public ResponseEntity<Object> update(@RequestBody LancamentoDTO pLancamentoDTO) {
-		try {
-			lancamentoService.update(pLancamentoDTO);
-			return ResponseEntity.status(HttpStatus.CREATED)
-					.body(true);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
-							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
-							"/api/lancamento/update"));
-		}
-
+		lancamentoService.saveOrUpdate(pLancamento);
+		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping
 	@RequestMapping("delete")
 	public ResponseEntity<Object> delete(@RequestBody UUID id) {
-		try {
-			lancamentoService.delete(id);
-			return ResponseEntity.status(HttpStatus.OK).body(null);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ReturnError(HttpStatus.INTERNAL_SERVER_ERROR,
-							HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage(),
-							"/api/lancamento/delete"));
-		}
-
+		lancamentoService.delete(id);
+		return ResponseEntity.noContent().build();
 	}
 
 }
