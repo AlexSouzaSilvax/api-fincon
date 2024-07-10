@@ -60,7 +60,7 @@ public class User implements UserDetails {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "data_atualizacao", nullable = true)
-	private Date data_atualizacao;
+	private Date dataAtualizacao;
 
 	public User() {
 	}
