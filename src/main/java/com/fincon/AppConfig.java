@@ -10,12 +10,13 @@ import com.fincon.dto.UserDTO;
 public class AppConfig {
 
     @Bean
-    public UserDTO userDTO() {
+    UserDTO userDTO() {
         return new UserDTO();
     }
 
     @Bean
-    public LancamentoDTO lancamentoDTO() {
+    LancamentoDTO lancamentoDTO() {
         return new LancamentoDTO();
     }
+
 }
