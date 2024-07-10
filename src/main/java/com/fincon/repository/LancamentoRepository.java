@@ -57,4 +57,10 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, UUID> {
 
 	@Query(value = "select ( (SELECT SUM(valor) FROM lancamento WHERE id_usuario = :pIdUsuario AND mes_referencia = :pMesReferencia AND ano_referencia = :pAnoReferencia and tipo_lancamento = 0 AND pago = true) - (SELECT SUM(valor) FROM lancamento WHERE id_usuario = :pIdUsuario AND mes_referencia = :pMesReferencia AND ano_referencia = :pAnoReferencia and tipo_lancamento = 1 AND pago = true) ) as saldo", nativeQuery = true)
 	String buscaTotalLancamentoPorMes(UUID pIdUsuario, int pMesReferencia, int pAnoReferencia);
+
+	@Query(value = "SELECT EXISTS (SELECT 1 FROM lancamento WHERE id_usuario = :pId ) AS registro_existe", nativeQuery = true)
+	boolean existsLancamentoUser(UUID pId);
+
+	@Query(value= "delete from lancamento where id_usuario = :pId", nativeQuery = true)
+	void deleteAllLancamentosPorUser(UUID pId);
 }
