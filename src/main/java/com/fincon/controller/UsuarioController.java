@@ -4,6 +4,8 @@ import com.fincon.dto.UserDTO;
 import com.fincon.model.User;
 import com.fincon.service.UsuarioService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +17,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api/user")
 @AllArgsConstructor
 @CrossOrigin
+@Tag(name = "User", description = "User API")
 public class UsuarioController {
 
 	private UsuarioService usuarioService;
