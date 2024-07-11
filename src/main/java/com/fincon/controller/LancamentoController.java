@@ -3,6 +3,8 @@ package com.fincon.controller;
 import com.fincon.model.Lancamento;
 import com.fincon.service.LancamentoService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api/lancamentos")
 @AllArgsConstructor
 @CrossOrigin
+@Tag(name = "Lançamentos", description = "Lançamentos API")
 public class LancamentoController {
 	private LancamentoService lancamentoService;
 
