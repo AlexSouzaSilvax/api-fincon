@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fincon.dto.LancamentoDTO;
 import com.fincon.enums.Categoria;
 import com.fincon.enums.TipoLancamento;
 import com.fincon.enums.TipoPagamento;
@@ -91,4 +92,27 @@ public class Lancamento {
 	@Column(name = "observacao", length = 9999)
 	private String observacao;
 
+	public Lancamento() {
+
+	}
+
+	public Lancamento(LancamentoDTO pLancamentoDTO) {
+		this.id = pLancamentoDTO.getId();
+		System.out.println(Categoria.findCategoriaByDescricao(pLancamentoDTO.getCategoria()));
+		this.categoria = Categoria.findCategoriaByDescricao(pLancamentoDTO.getCategoria());
+		this.descricao = pLancamentoDTO.getDescricao();
+		this.valor = pLancamentoDTO.getValor();
+		this.tipoPagamento = TipoPagamento.findTipoPagamentoByDescricao(pLancamentoDTO.getTipoPagamento());
+		this.tipoLancamento = TipoLancamento.findTipoLancamentoByDescricao(pLancamentoDTO.getTipoLancamento());
+		this.dataLancamento = pLancamentoDTO.getDataLancamento();
+		this.pago = pLancamentoDTO.isPago();
+		this.mensal = pLancamentoDTO.isMensal();
+		this.mesReferencia = pLancamentoDTO.getMesReferencia();
+		this.anoReferencia = pLancamentoDTO.getAnoReferencia();
+		this.observacao = pLancamentoDTO.getObservacao();
+		this.dataVencimento = pLancamentoDTO.getDataVencimento();
+		this.dataPrevistaPagamento = pLancamentoDTO.getDataPrevistaPagamento();
+		this.quantidadeParcelas = pLancamentoDTO.getQuantidadeParcelas();
+		this.user = new User(pLancamentoDTO.getUsuario());
+	}
 }
