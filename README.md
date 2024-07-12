@@ -7,7 +7,7 @@ Fincon é um sistema para controle financeiro que desenvolvi para me auxiliar no
 - **Java 17**
 - **Spring Boot 3**
 - **Spring Security**
-- **Swagger 2**
+- **Swagger 3**
 - **PostgreSQL**
 - **Docker**
 

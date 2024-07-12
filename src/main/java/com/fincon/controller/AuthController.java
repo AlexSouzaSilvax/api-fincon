@@ -8,12 +8,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fincon.service.AuthorizationService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import com.fincon.dto.AuthenticationDTO;
 import com.fincon.dto.RegisterDTO;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("api/auth")
+@Tag(name = "Authentication", description = "Auth API")
 public class AuthController {
    
     @Autowired
