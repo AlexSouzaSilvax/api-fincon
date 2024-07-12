@@ -1,5 +1,6 @@
 package com.fincon.controller;
 
+import com.fincon.dto.LancamentoDTO;
 import com.fincon.model.Lancamento;
 import com.fincon.service.LancamentoService;
 
@@ -33,8 +34,8 @@ public class LancamentoController {
 	}
 
 	@PostMapping("create")
-	public ResponseEntity<Object> create(@RequestBody Lancamento pLancamento) {
-		lancamentoService.saveOrUpdate(pLancamento);
+	public ResponseEntity<Object> create(@RequestBody LancamentoDTO pLancamentoDTO) {
+		lancamentoService.saveOrUpdate(new Lancamento(pLancamentoDTO));
 		return ResponseEntity.noContent().build();
 	}
 
