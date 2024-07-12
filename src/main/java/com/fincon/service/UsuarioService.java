@@ -34,8 +34,7 @@ public class UsuarioService {
 		return userRespository.findById(idUser);
 	}
 
-	public User save(User pUser) {
-		// pUser.setDataCriacao(Util.dataAtual());
+	public User save(User pUser) {		
 		return userRespository.save(pUser);
 	}
 
