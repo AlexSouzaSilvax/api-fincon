@@ -54,9 +54,8 @@ public class UserDTO {
 
                 List<UserDTO> listUserDTO = new ArrayList<>();
 
-                UserDTO userDTO = new UserDTO();
-
                 for (int i = 0; i < pListUser.size(); i++) {
+                        UserDTO userDTO = new UserDTO();
                         userDTO.setId(pListUser.get(i).getId());
                         userDTO.setNome(pListUser.get(i).getNome());
                         userDTO.setEmail(pListUser.get(i).getEmail());
