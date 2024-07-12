@@ -33,7 +33,6 @@ public class LancamentoService {
 
 	private LancamentoDTO lancamentoDTO;
 
-	@Transactional
 	public List<LancamentoDTO> findAll() {
 		return lancamentoDTO
 				.LancamentoToLancamentoDTO(lancamentoRespository.findAll(Sort.by(Sort.Direction.DESC, "id")));
@@ -43,7 +42,6 @@ public class LancamentoService {
 		return lancamentoRespository.findAllOrderNumeroParcela();
 	}
 
-	@Transactional
 	public List<LancamentoDTO> findListMain(UUID idUser, int pMesReferencia, int pAnoReferencia) {
 		List<Lancamento> listaLancamentos = new ArrayList<>();
 		List<LancamentoDTO> listaLancamentoDTO = new ArrayList<>();
@@ -71,6 +69,7 @@ public class LancamentoService {
 		return listaLancamentoDTO;
 	}
 
+	@Transactional
 	@SuppressWarnings("deprecation")
 	public void insereSaldoMesAnterior(UUID idUser, int pMesReferencia, int pAnoReferencia) {
 		int mesSeguinte = pMesReferencia + 1;
@@ -116,12 +115,14 @@ public class LancamentoService {
 		return lancamentoRespository.findById(id);
 	}
 
+	@Transactional
 	public void delete(UUID id) {
 		if (existsLancamento(id)) {
 			lancamentoRespository.deleteById(id);
 		}
 	}
 
+	@Transactional
 	public Object saveOrUpdate(Lancamento pLancamento) {
 		if (pLancamento.getId() != null) {
 			return update(new LancamentoDTO(pLancamento));
@@ -129,6 +130,7 @@ public class LancamentoService {
 		return save(pLancamento.getUser().getId(), pLancamento);
 	}
 
+	@Transactional
 	public Lancamento save(UUID idUser, Lancamento pLancamento) {
 		pLancamento.setUser(new User(idUser));
 
@@ -143,7 +145,7 @@ public class LancamentoService {
 		// quando for mensal
 		if (pLancamento.isMensal() && pLancamento.getTipoPagamento() != TipoPagamento.CREDITO) {
 			// replicar para apenas 6 meses, NO CASO O ATUAL + 6 PRA FRENTE
-			saveLancamentosProxMensal(5, pLancamento);
+			saveLancamentosProxMensal(6, pLancamento);
 		}
 
 		// quando for parcelado
@@ -161,6 +163,7 @@ public class LancamentoService {
 		return lancamentoRespository.save(pLancamento);
 	}
 
+	@Transactional
 	public Optional<Lancamento> update(LancamentoDTO pLancamento) {
 		lancamentoRespository.updateAllById(pLancamento.getAnoReferencia(),
 				Integer.valueOf(pLancamento.getCategoria()),
@@ -179,24 +182,29 @@ public class LancamentoService {
 		return findById(pLancamento.getId());
 	}
 
+	@Transactional
 	private void saveLancamentosProxMensal(int pQuantidadedeMensal, Lancamento pLancamento) {
 		int quantidadedeMensal = pQuantidadedeMensal;
 		int novoAnoReferencia = pLancamento.getAnoReferencia();
 		int novo = 1;
 		if (quantidadedeMensal > 0) {
-			for (int i = 0; i < quantidadedeMensal; i++) {
-				int novoMesReferencia = pLancamento.getMesReferencia() + novo;
-				lancamentoRespository.save(manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia));
-				novo++;
+			int novoMesReferencia = pLancamento.getMesReferencia() + novo;
+			for (int i = 0; i < quantidadedeMensal; i++) {												
+				Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);				
+				lancamento.setPago(false);
+				lancamentoRespository.save(lancamento);				
+				novo++;				
 				novoMesReferencia++;
-				if (novoMesReferencia == 12) {
+				if (novoMesReferencia > 12) {
 					novoAnoReferencia++;
 					novo = 1;
+					novoMesReferencia = 1;
 				}
 			}
 		}
 	}
 
+	@Transactional
 	private void salvaParcelasDoProxAnoDiante(int quantidadeParcelasAnoAtual, Lancamento pLancamento) {
 		int quantidadedeParcelasProximoAno = pLancamento.getQuantidadeParcelas() - quantidadeParcelasAnoAtual;
 		int numeroParcela = quantidadeParcelasAnoAtual + 1;
@@ -217,6 +225,7 @@ public class LancamentoService {
 
 	}
 
+	@Transactional
 	// retorna quantidade de parcelas do ano atual já salvas
 	private int saveLancamentoParcelasAnoAtual(Lancamento pLancamento) {
 		int pQuantidadeParcelas = pLancamento.getQuantidadeParcelas();
@@ -233,6 +242,7 @@ public class LancamentoService {
 		return novo;
 	}
 
+	@Transactional
 	@SuppressWarnings("deprecation")
 	private Lancamento manipulaDadosLancamento(Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		Lancamento lancamento = new Lancamento();
@@ -275,20 +285,22 @@ public class LancamentoService {
 		lancamento.setDataLancamento(pLancamento.getDataLancamento());
 		lancamento.setDescricao(pLancamento.getDescricao());
 		lancamento.setCategoria(pLancamento.getCategoria());
-		lancamento.setObservacao(pLancamento.getObservacao());
+		lancamento.setObservacao("Criado de forma automática pelo sistema.");
 		lancamento.setUser(pLancamento.getUser());
 		return lancamento;
 	}
 
+	@Transactional
 	// salva lancamentos parcela
 	private void saveLancamentoParcelas(int i, Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);
 		lancamento.setPago(false);
-		lancamento.setDescricao(pLancamento.getDescricao() + " " + i + "/" + pLancamento.getQuantidadeParcelas());
+		lancamento.setDescricao(i + "/" + pLancamento.getQuantidadeParcelas() + " " + pLancamento.getDescricao());
 		lancamento.setNumeroParcela(i);
 		lancamentoRespository.save(lancamento);
 	}
 
+	@Transactional
 	private BigDecimal buscaTotalLancamentoPorMesAno(UUID idUser, int pMesReferencia, int pAnoReferencia) {
 		BigDecimal saldo = new BigDecimal(0);
 		try {
@@ -300,6 +312,7 @@ public class LancamentoService {
 		return saldo;
 	}
 
+	@Transactional
 	@SuppressWarnings("deprecation")
 	private int ultimoDiaMes(int pMesReferencia) {
 		Calendar instance = Calendar.getInstance();
@@ -309,6 +322,7 @@ public class LancamentoService {
 		return instance.getTime().getDate();
 	}
 
+	@Transactional
 	public boolean existsLancamento(UUID id) {
 		return lancamentoRespository.existsById(id);
 	}
