@@ -70,7 +70,6 @@ public class LancamentoService {
 	}
 
 	@Transactional
-	@SuppressWarnings("deprecation")
 	public void insereSaldoMesAnterior(UUID idUser, int pMesReferencia, int pAnoReferencia) {
 		int mesSeguinte = pMesReferencia + 1;
 		if (mesSeguinte > 12) {
@@ -78,37 +77,29 @@ public class LancamentoService {
 			pAnoReferencia += 1;
 		}
 		Date hoje = Util.dataAtual();
-		if (hoje.getDay() == 1 && pMesReferencia == hoje.getMonth()) {
-			// verifica se exite o lançamento saldoMesAnterior já criado
-			List<Lancamento> listaLancamentos = this.lancamentoRespository.findByLancamentoSaldoMesAnterior(idUser,
-					pMesReferencia, pAnoReferencia);
-			if (listaLancamentos.size() == 0) { // nenhum lancamento criado
-				// criar lancamento
-				try {
-					Lancamento novoLancamentoSaldoMesAnterior = new Lancamento();
-					novoLancamentoSaldoMesAnterior.setUser(new User(idUser));
-					novoLancamentoSaldoMesAnterior.setAnoReferencia(pAnoReferencia);
-					novoLancamentoSaldoMesAnterior.setMesReferencia(pMesReferencia);
-					novoLancamentoSaldoMesAnterior.setCategoria(Categoria.TRABALHO);
-					novoLancamentoSaldoMesAnterior.setDataPagamento(hoje);
-					novoLancamentoSaldoMesAnterior.setDataPrevistaPagamento(hoje);
-					novoLancamentoSaldoMesAnterior.setDataVencimento(hoje);
-					novoLancamentoSaldoMesAnterior.setDescricao("Saldo do Mês Anterior");
-					novoLancamentoSaldoMesAnterior.setObservacao("Criado de forma automática pelo sistema.");
-					novoLancamentoSaldoMesAnterior.setPago(true);
-					novoLancamentoSaldoMesAnterior.setTipoLancamento(TipoLancamento.ENTRADA);
-					novoLancamentoSaldoMesAnterior.setTipoPagamento(TipoPagamento.PIX);
-					novoLancamentoSaldoMesAnterior
-							.setValor(buscaTotalLancamentoPorMesAno(idUser, (pMesReferencia - 1), pAnoReferencia));
-					save(idUser, novoLancamentoSaldoMesAnterior);
-				} catch (Exception e) {
-					// System.out.println("Erro ao salvar: " + e);
-				}
-				// System.out.println("Salvo com sucesso");
-			} else {
-				// System.out.println("Já existe");
-			}
+		// verifica se exite o lançamento saldoMesAnterior já criado
+		List<Lancamento> listaLancamentos = this.lancamentoRespository.findByLancamentoSaldoMesAnterior(idUser,
+				pMesReferencia, pAnoReferencia);
+		if (listaLancamentos.size() == 0) { // nenhum lancamento criado
+			// criar lancamento
+			Lancamento novoLancamentoSaldoMesAnterior = new Lancamento();
+			novoLancamentoSaldoMesAnterior.setUser(new User(idUser));
+			novoLancamentoSaldoMesAnterior.setAnoReferencia(pAnoReferencia);
+			novoLancamentoSaldoMesAnterior.setMesReferencia(pMesReferencia);
+			novoLancamentoSaldoMesAnterior.setCategoria(Categoria.TRABALHO);
+			novoLancamentoSaldoMesAnterior.setDataPagamento(hoje);
+			novoLancamentoSaldoMesAnterior.setDataPrevistaPagamento(hoje);
+			novoLancamentoSaldoMesAnterior.setDataVencimento(hoje);
+			novoLancamentoSaldoMesAnterior.setDescricao("Saldo do Mês Anterior");
+			novoLancamentoSaldoMesAnterior.setObservacao("Criado de forma automática pelo sistema.");
+			novoLancamentoSaldoMesAnterior.setPago(true);
+			novoLancamentoSaldoMesAnterior.setTipoLancamento(TipoLancamento.ENTRADA);
+			novoLancamentoSaldoMesAnterior.setTipoPagamento(TipoPagamento.PIX);
+			novoLancamentoSaldoMesAnterior
+					.setValor(buscaTotalLancamentoPorMesAno(idUser, (pMesReferencia - 1), pAnoReferencia));
+			save(idUser, novoLancamentoSaldoMesAnterior);
 		}
+		// System.out.println("Salvo com sucesso");
 	}
 
 	public Optional<Lancamento> findById(UUID id) {
@@ -166,7 +157,7 @@ public class LancamentoService {
 	@Transactional
 	public Optional<Lancamento> update(LancamentoDTO pLancamento) {
 		lancamentoRespository.updateAllById(pLancamento.getAnoReferencia(),
-				Integer.valueOf(pLancamento.getCategoria()),
+				pLancamento.getCategoria(),
 				pLancamento.getDataPrevistaPagamento(),
 				pLancamento.getDataVencimento(),
 				pLancamento.getDescricao(),
@@ -175,8 +166,8 @@ public class LancamentoService {
 				pLancamento.getObservacao(),
 				pLancamento.isPago(),
 				pLancamento.getQuantidadeParcelas(),
-				Integer.valueOf(pLancamento.getTipoLancamento()),
-				Integer.valueOf(pLancamento.getTipoPagamento()),
+				pLancamento.getTipoLancamento(),
+				pLancamento.getTipoPagamento(),
 				pLancamento.getValor(),
 				pLancamento.getId());
 		return findById(pLancamento.getId());
@@ -189,11 +180,11 @@ public class LancamentoService {
 		int novo = 1;
 		if (quantidadedeMensal > 0) {
 			int novoMesReferencia = pLancamento.getMesReferencia() + novo;
-			for (int i = 0; i < quantidadedeMensal; i++) {												
-				Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);				
+			for (int i = 0; i < quantidadedeMensal; i++) {
+				Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);
 				lancamento.setPago(false);
-				lancamentoRespository.save(lancamento);				
-				novo++;				
+				lancamentoRespository.save(lancamento);
+				novo++;
 				novoMesReferencia++;
 				if (novoMesReferencia > 12) {
 					novoAnoReferencia++;
