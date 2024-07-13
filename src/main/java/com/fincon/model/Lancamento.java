@@ -98,12 +98,11 @@ public class Lancamento {
 
 	public Lancamento(LancamentoDTO pLancamentoDTO) {
 		this.id = pLancamentoDTO.getId();
-		System.out.println(Categoria.findCategoriaByDescricao(pLancamentoDTO.getCategoria()));
-		this.categoria = Categoria.findCategoriaByDescricao(pLancamentoDTO.getCategoria());
+		this.categoria = Categoria.findCategoriaByValue(pLancamentoDTO.getCategoria());
 		this.descricao = pLancamentoDTO.getDescricao();
 		this.valor = pLancamentoDTO.getValor();
-		this.tipoPagamento = TipoPagamento.findTipoPagamentoByDescricao(pLancamentoDTO.getTipoPagamento());
-		this.tipoLancamento = TipoLancamento.findTipoLancamentoByDescricao(pLancamentoDTO.getTipoLancamento());
+		this.tipoPagamento = TipoPagamento.findTipoPagamentoByValue(pLancamentoDTO.getTipoPagamento());
+		this.tipoLancamento = TipoLancamento.findTipoLancamentoByValue(pLancamentoDTO.getTipoLancamento());
 		this.dataLancamento = pLancamentoDTO.getDataLancamento();
 		this.pago = pLancamentoDTO.isPago();
 		this.mensal = pLancamentoDTO.isMensal();
