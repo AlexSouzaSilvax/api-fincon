@@ -28,7 +28,6 @@ public enum Categoria {
     COMBUSTIVEL(20, "Combustível"),
     POUPANCA(21, "Poupança");
 
-    @SuppressWarnings("unused")
     private int value;
     private String descricao;
 
@@ -41,6 +40,10 @@ public enum Categoria {
         return this.descricao;
     }
 
+    public int getValue() {
+        return this.value;
+    }
+
     private static final Map<String, Categoria> categoriaPorDescricao = new HashMap<>();
 
     static {
@@ -51,5 +54,14 @@ public enum Categoria {
 
     public static Categoria findCategoriaByDescricao(String pDescricao) {
         return categoriaPorDescricao.get(pDescricao);
+    }
+
+    public static Categoria findCategoriaByValue(int pValue) {
+        for (Categoria c : Categoria.values()) {
+            if (c.getValue() == pValue) {
+                return c;
+            }
+        }
+        return null;
     }
 }
