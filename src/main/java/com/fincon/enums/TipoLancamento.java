@@ -7,7 +7,6 @@ public enum TipoLancamento {
 
 	ENTRADA(0, "Entrada"), SAIDA(1, "Saída");
 
-	@SuppressWarnings("unused")
 	private int value;
 	private String descricao;
 
@@ -20,15 +19,28 @@ public enum TipoLancamento {
 		return this.descricao;
 	}
 
+	public int getValue() {
+		return this.value;
+	}
+
 	private static final Map<String, TipoLancamento> tipoLancamentoPorDescricao = new HashMap<>();
 
 	static {
-		for (TipoLancamento tpL : TipoLancamento.values()) {
-			tipoLancamentoPorDescricao.put(tpL.getDescricao(), tpL);
+		for (TipoLancamento tipoLancamento : TipoLancamento.values()) {
+			tipoLancamentoPorDescricao.put(tipoLancamento.getDescricao(), tipoLancamento);
 		}
 	}
 
 	public static TipoLancamento findTipoLancamentoByDescricao(String pDescricao) {
 		return tipoLancamentoPorDescricao.get(pDescricao);
 	}
+
+	public static TipoLancamento findTipoLancamentoByValue(int pValue) {
+        for (TipoLancamento tipoLancamento : TipoLancamento.values()) {
+            if (tipoLancamento.getValue() == pValue) {
+                return tipoLancamento;
+            }
+        }
+        return null;
+    }
 }
