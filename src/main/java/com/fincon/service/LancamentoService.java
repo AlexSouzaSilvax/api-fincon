@@ -155,22 +155,9 @@ public class LancamentoService {
 	}
 
 	@Transactional
-	public Optional<Lancamento> update(LancamentoDTO pLancamento) {
-		lancamentoRespository.updateAllById(pLancamento.getAnoReferencia(),
-				pLancamento.getCategoria(),
-				pLancamento.getDataPrevistaPagamento(),
-				pLancamento.getDataVencimento(),
-				pLancamento.getDescricao(),
-				pLancamento.isMensal(),
-				pLancamento.getMesReferencia(),
-				pLancamento.getObservacao(),
-				pLancamento.isPago(),
-				pLancamento.getQuantidadeParcelas(),
-				pLancamento.getTipoLancamento(),
-				pLancamento.getTipoPagamento(),
-				pLancamento.getValor(),
-				pLancamento.getId());
-		return findById(pLancamento.getId());
+	public Optional<Lancamento> update(LancamentoDTO pLancamentoDTO) {
+		lancamentoRespository.save(new Lancamento(pLancamentoDTO));
+		return findById(pLancamentoDTO.getId());
 	}
 
 	@Transactional
