@@ -10,6 +10,7 @@ Fincon é um sistema para controle financeiro que desenvolvi para me auxiliar no
 - **Swagger 3**
 - **PostgreSQL**
 - **Docker**
+- **Render**
 
 ## Hospedagem
 
