@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class EmailBemVindo {
+public class EmailSimples {
     private String destinatario;
     private String titulo;
     private String nomeDestinatario;
