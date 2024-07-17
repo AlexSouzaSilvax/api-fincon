@@ -1,41 +1,14 @@
 package com.fincon.service;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
-
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.net.http.HttpRequest;
-
-import com.fincon.model.EmailBemVindo;
+import com.fincon.model.EmailSimples;
 
 @Service
 public class EmailBemVindoService {
 
-    private static final HttpClient httpClient = HttpClient.newBuilder().build();
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    @Async
-    public String createEntry(EmailBemVindo emailBemVindo) throws Exception {
-        String requestBody = objectMapper.writeValueAsString(emailBemVindo);
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("https://envio-email.onrender.com/api/envia-email"))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-        return response.body();
-    }
-
     public void enviar(String destinatario, String nomeDestinatario) {
         try {
-            String response = this.createEntry(new EmailBemVindo(destinatario,
+            String response = new EnviaEmailService().enviaEmailSimples(new EmailSimples(destinatario,
                     "Bem-vindo ao Fincon - Seu Novo Sistema de Controle Financeiro!", nomeDestinatario,
                     this.conteudoEmail(nomeDestinatario)));
             System.out.println(response);
