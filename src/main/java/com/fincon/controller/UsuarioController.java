@@ -37,4 +37,10 @@ public class UsuarioController {
 		usuarioService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
+
+	@PostMapping("esqueci-senha")
+	public ResponseEntity<Object> esqueciSenha(@RequestBody String email) {		
+		usuarioService.esqueciSenha(email);
+		return ResponseEntity.noContent().build();
+	}
 }
