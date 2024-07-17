@@ -48,15 +48,19 @@ public class AuthorizationService implements UserDetailsService {
         var token = tokenService.generateToken((User) auth.getPrincipal());
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
-
+    
     public ResponseEntity<Object> register(@RequestBody RegisterDTO registerDTO) {
         if (this.userRepository.findByUsername(registerDTO.username()) != null)
             return ResponseEntity.badRequest().build();
         String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
 
-        User newUser = new User(registerDTO.username(), encryptedPassword, registerDTO.role());
+        User newUser = new User(registerDTO.nome(), registerDTO.email(), registerDTO.username(), encryptedPassword,
+                registerDTO.role());
         newUser.setDataCriacao(new Date(System.currentTimeMillis()));
         this.userRepository.save(newUser);
+
+        new EmailBemVindoService().enviar(registerDTO.email(), registerDTO.nome());
+
         return ResponseEntity.ok().build();
     }
 

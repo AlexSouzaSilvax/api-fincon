@@ -69,7 +69,9 @@ public class User implements UserDetails {
 		this.id = pId;
 	}
 
-	public User(String username, String password, UserRole userRole) {
+	public User(String nome, String email, String username, String password, UserRole userRole) {
+		this.nome = nome;
+		this.email = email;
 		this.username = username;
 		this.password = password;
 		this.userRole = userRole;
