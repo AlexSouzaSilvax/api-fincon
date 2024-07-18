@@ -77,6 +77,12 @@ public class User implements UserDetails {
 		this.userRole = userRole;
 	}
 
+	public User(UUID id, String email, String nome) {
+		this.id = id;
+		this.email = email;
+		this.nome = nome;
+	}
+
 	@SuppressWarnings("static-access")
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
