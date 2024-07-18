@@ -1,16 +1,16 @@
 package com.fincon.service;
 
 import org.springframework.stereotype.Service;
-import com.fincon.model.EmailSimples;
+import com.fincon.model.Email;
 
 @Service
 public class EmailEsqueciSenhaService {
 
     public void enviar(String destinatario, String usuario, String senha) {
         try {
-            String response = new EnviaEmailService().enviaEmailSimples(new EmailSimples(destinatario,
+            String response = new EnviaEmailService().enviaEmail(new Email(destinatario,
                     "Fincon - Novas Credenciais", null,
-                    this.conteudoEmail(usuario, senha)));
+                    null, this.conteudoEmail(usuario, senha)));
             System.out.println(response);
         } catch (Exception e) {
             e.printStackTrace();
