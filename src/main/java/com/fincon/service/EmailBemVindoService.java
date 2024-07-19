@@ -1,16 +1,16 @@
 package com.fincon.service;
 
 import org.springframework.stereotype.Service;
-import com.fincon.model.EmailSimples;
+import com.fincon.model.Email;
 
 @Service
 public class EmailBemVindoService {
 
     public void enviar(String destinatario, String nomeDestinatario) {
         try {
-            String response = new EnviaEmailService().enviaEmailSimples(new EmailSimples(destinatario,
+            String response = new EnviaEmailService().enviaEmail(new Email(destinatario,
                     "Bem-vindo ao Fincon - Seu Novo Sistema de Controle Financeiro!", nomeDestinatario,
-                    this.conteudoEmail(nomeDestinatario)));
+                    null, this.conteudoEmail(nomeDestinatario)));
             System.out.println(response);
         } catch (Exception e) {
             e.printStackTrace();

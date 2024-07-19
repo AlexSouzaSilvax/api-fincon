@@ -1,29 +1,65 @@
 package com.fincon.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import com.fincon.Util.Util;
+import com.fincon.dto.LancamentoDTO;
+import com.fincon.dto.UserLancamentoMesAtualDTO;
 import com.fincon.model.Email;
 
-@Service
-public class EmailEsqueciSenhaService {
+import java.util.List;
 
-    public void enviar(String destinatario, String usuario, String senha) {
+@Service
+public class EnviaEmailBackupMensalService {
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private LancamentoService lancamentoService;
+
+    @Async
+    @Scheduled(cron = "59 59 23 L * ?", zone = "America/Sao_Paulo") // Ultimo seg, min das 23h do ultimo dia do mês
+    // @Scheduled(cron = "00 10 10 19 * ?", zone = "America/Sao_Paulo")
+    public void enviaBackupMensal() {
+
+        int pMesReferencia = Util.getMesAtual();
+        int pAnoReferencia = Util.getAnoAtual();
+
+        String pMesReferenciaExtenso = Util.getMesAtualExtenso();
+
+        for (UserLancamentoMesAtualDTO usuario : usuarioService.findUserLancamentoMesAtual(pMesReferencia,
+                pAnoReferencia)) {
+
+            String titulo = "Fincon - Backup Mensal " + pMesReferenciaExtenso + "/" + pAnoReferencia;
+
+            this.enviar(usuario.getEmail(), titulo, usuario.getNome(), pMesReferenciaExtenso,
+                    pAnoReferencia, lancamentoService.findListMain(usuario.getId(), pMesReferencia, pAnoReferencia));
+        }
+    }
+
+    public void enviar(String destinatario, String pTitulo, String pNomeUsuario, String pMesReferenciaExtenso,
+            int pAnoReferencia, List<LancamentoDTO> pRelatorioMensal) {
         try {
-            String response = new EnviaEmailService().enviaEmail(new Email(destinatario,
-                    "Fincon - Novas Credenciais", null,
-                    null, this.conteudoEmail(usuario, senha)));
+            String response = new EnviaEmailService().enviaEmailAnexo(new Email(destinatario,
+                    pTitulo, pNomeUsuario,
+                    pRelatorioMensal, this.conteudoEmail(pNomeUsuario, pMesReferenciaExtenso, pAnoReferencia)));
             System.out.println(response);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public String conteudoEmail(String usuario, String senha) {
+    public String conteudoEmail(String pNomeUsuario, String pMesReferenciaExtenso, int pAnoReferencia) {
         return "<!DOCTYPE html>\n" +
                 "<html lang=\"pt-BR\">\n" +
                 "  <head>\n" +
                 "    <meta charset=\"UTF-8\" />\n" +
                 "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n" +
-                "    <title>Esqueci senha</title>\n" +
+                "    <title>Backup Mensal</title>\n" +
                 "    <style>\n" +
                 "      html {\n" +
                 "        width: 100%;\n" +
@@ -81,16 +117,6 @@ public class EmailEsqueciSenhaService {
                 "        text-decoration: none;\n" +
                 "        border-radius: 5px;\n" +
                 "      }\n" +
-                "      .divNovasCredenciais {\n" +
-                "        display: flex;\n" +
-                "        flex-direction: row;\n" +
-                "        justify-content: start;\n" +
-                "        color: #444;\n" +
-                "      }\n" +
-                "      .pNovasCredenciais {\n" +
-                "        color: #1461a9;\n" +
-                "        font-weight: 800;\n" +
-                "      }\n" +
                 "    </style>\n" +
                 "  </head>\n" +
                 "  <body>\n" +
@@ -100,21 +126,14 @@ public class EmailEsqueciSenhaService {
                 "        <h1>Fincon</h1>\n" +
                 "      </div>\n" +
                 "      <div class=\"content\">\n" +
-                "        <h2>Olá Alex,</h2>\n" +
-                "        <p>Vimos que você está precisando de ajuda para acessar sua conta.</p>\n" +
+                "        <h2>Olá " + pNomeUsuario + ",</h2>\n" +
                 "        <br />\n" +
-                "        <p>Abaixo estão suas novas credenciais</p>\n" +
+                "        <p>Seu backup do mês de " + pMesReferenciaExtenso + " de " + pAnoReferencia
+                + " já está pronto.</p>\n" +
+                "        <br />        \n" +
                 "        <br />\n" +
-                "        <div class=\"divNovasCredenciais\">\n" +
-                "          <p>usuário:&nbsp;</p>\n" +
-                "          <p class=\"pNovasCredenciais\">" + usuario + "</p>\n" +
-                "        </div>\n" +
-                "        <div class=\"divNovasCredenciais\">\n" +
-                "          <p>senha:&nbsp;</p>\n" +
-                "          <p class=\"pNovasCredenciais\">" + senha + "</p>\n" +
-                "        </div>\n" +
                 "        <br />\n" +
-                "        <h4>Lembre-se quando fazer login novamente altere sua senha</h4>\n" +
+                "        <br />\n" +
                 "        <br />\n" +
                 "        <p>\n" +
                 "          Caso precise de ajuda, nossa equipe de suporte está à disposição para\n" +
@@ -133,5 +152,4 @@ public class EmailEsqueciSenhaService {
                 "  </body>\n" +
                 "</html>";
     }
-
 }
