@@ -23,7 +23,7 @@ public class EnviaEmailBackupMensalService {
 
     @Async
     @Scheduled(cron = "59 59 23 L * ?", zone = "America/Sao_Paulo") // Ultimo seg, min das 23h do ultimo dia do mês
-    // @Scheduled(cron = "00 10 10 19 * ?", zone = "America/Sao_Paulo")
+    // @Scheduled(cron = "00 57 19 22 * ?", zone = "America/Sao_Paulo")
     public void enviaBackupMensal() {
 
         int pMesReferencia = Util.getMesAtual();
