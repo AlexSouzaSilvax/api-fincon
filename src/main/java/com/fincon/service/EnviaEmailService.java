@@ -37,14 +37,12 @@ public class EnviaEmailService {
     public String enviaEmailAnexo(Email pEmail) throws Exception {
         String requestBody = objectMapper.writeValueAsString(pEmail);
         HttpRequest request = HttpRequest.newBuilder()
-                //.uri(new URI("https://envio-email.onrender.com/api/envia-email-anexo"))
-                .uri(new URI("http://localhost:8080/api/envia-email-anexo"))
+                .uri(new URI("https://envio-email.onrender.com/api/envia-email-anexo"))                
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
         return response.body();
     }
 
