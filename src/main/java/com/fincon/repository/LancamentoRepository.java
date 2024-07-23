@@ -61,6 +61,11 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, UUID> {
 	@Query(value = "SELECT EXISTS (SELECT 1 FROM lancamento WHERE id_usuario = :pId ) AS registro_existe", nativeQuery = true)
 	boolean existsLancamentoUser(UUID pId);
 
-	@Query(value= "delete from lancamento where id_usuario = :pId", nativeQuery = true)
+	@Query(value = "delete from lancamento where id_usuario = :pId", nativeQuery = true)
 	void deleteAllLancamentosPorUser(UUID pId);
+
+	@Transactional
+	@Modifying(clearAutomatically = true)
+	@Query(value = "update lancamento set pago = :pIsPago where id = :pId", nativeQuery = true)
+	void updatePago(@Param("pId") UUID idLancamento, @Param("pIsPago") boolean isPago);
 }
