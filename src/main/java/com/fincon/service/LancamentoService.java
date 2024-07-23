@@ -304,4 +304,9 @@ public class LancamentoService {
 	public boolean existsLancamento(UUID id) {
 		return lancamentoRespository.existsById(id);
 	}
+
+	@Transactional
+    public void updatePago(UUID idLancamento, boolean isPago) {
+        lancamentoRespository.updatePago(idLancamento,  isPago);
+    }
 }
