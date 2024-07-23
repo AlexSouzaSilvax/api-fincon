@@ -26,6 +26,12 @@ import lombok.AllArgsConstructor;
 public class LancamentoController {
 	private LancamentoService lancamentoService;
 
+	@PostMapping("update-pago")
+	public ResponseEntity<Object> updatePago(@RequestParam("id") UUID idLancamento, @RequestParam("pago") boolean isPago) {
+		lancamentoService.updatePago(idLancamento, isPago);
+		return ResponseEntity.noContent().build();
+	}
+
 	@GetMapping("find-list-main")
 	public ResponseEntity<Object> findListMain(@RequestParam("id_usuario") UUID idUsuario,
 			@RequestParam("mes_referencia") int pMesReferencia,
