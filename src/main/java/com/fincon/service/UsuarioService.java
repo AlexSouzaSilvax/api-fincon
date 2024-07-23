@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fincon.Util.GeradorSenha;
+import com.fincon.Util.Util;
 import com.fincon.dto.UserDTO;
 import com.fincon.dto.UserLancamentoMesAtualDTO;
+import com.fincon.dto.UserUpdateDTO;
 import com.fincon.model.User;
 import com.fincon.repository.LancamentoRepository;
 import com.fincon.repository.UserRepository;
@@ -42,8 +44,11 @@ public class UsuarioService {
 		return userRepository.save(pUser);
 	}
 
-	public User update(User pUser) {
-		return userRepository.save(pUser);
+	public void update(UserUpdateDTO pUserUpdateDTO) {
+		pUserUpdateDTO.setPassword(new BCryptPasswordEncoder().encode(pUserUpdateDTO.getPassword()));		
+		userRepository.userUpdateDTO(pUserUpdateDTO.getNome(), pUserUpdateDTO.getEmail(),
+				pUserUpdateDTO.getCelular(), pUserUpdateDTO.getUsername(), pUserUpdateDTO.getPassword(),
+				pUserUpdateDTO.getId(), Util.dataAtual());
 	}
 
 	public void delete(UUID idUser) {
