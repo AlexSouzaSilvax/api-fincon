@@ -1,7 +1,7 @@
 package com.fincon.controller;
 
 import com.fincon.dto.UserDTO;
-import com.fincon.model.User;
+import com.fincon.dto.UserUpdateDTO;
 import com.fincon.service.UsuarioService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,8 +28,9 @@ public class UsuarioController {
 	}
 
 	@PostMapping("update")
-	public ResponseEntity<Object> update(@RequestBody User pUsuario) {
-		return ResponseEntity.ok(usuarioService.update(pUsuario));
+	public ResponseEntity<Object> update(@RequestBody UserUpdateDTO pUserUpdateDTO) {
+		usuarioService.update(pUserUpdateDTO);
+		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("delete")
@@ -39,7 +40,7 @@ public class UsuarioController {
 	}
 
 	@PostMapping("esqueci-senha")
-	public ResponseEntity<Object> esqueciSenha(@RequestBody String email) {		
+	public ResponseEntity<Object> esqueciSenha(@RequestBody String email) {
 		usuarioService.esqueciSenha(email);
 		return ResponseEntity.noContent().build();
 	}
