@@ -14,12 +14,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.fincon.security.TokenService;
 import com.fincon.dto.AuthenticationDTO;
 import com.fincon.dto.LoginResponseDTO;
 import com.fincon.dto.RegisterDTO;
 import com.fincon.model.User;
 import com.fincon.repository.UserRepository;
+import com.fincon.security.TokenService;
+
 import jakarta.validation.Valid;
 
 @Service
@@ -35,6 +36,9 @@ public class AuthorizationService implements UserDetailsService {
 
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username);
@@ -46,9 +50,10 @@ public class AuthorizationService implements UserDetailsService {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        String idUsuario = usuarioService.findIdByUsername(data.username());
+        return ResponseEntity.ok(new LoginResponseDTO(token, idUsuario));
     }
-    
+
     public ResponseEntity<Object> register(@RequestBody RegisterDTO registerDTO) {
         if (this.userRepository.findByUsername(registerDTO.username()) != null)
             return ResponseEntity.badRequest().build();
