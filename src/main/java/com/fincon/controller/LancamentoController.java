@@ -1,33 +1,33 @@
 package com.fincon.controller;
 
-import com.fincon.dto.LancamentoDTO;
-import com.fincon.model.Lancamento;
-import com.fincon.service.LancamentoService;
-
-import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import lombok.AllArgsConstructor;
+
+import com.fincon.dto.LancamentoDTO;
+import com.fincon.model.Lancamento;
+import com.fincon.service.LancamentoService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/lancamentos")
-@AllArgsConstructor
-@CrossOrigin
 @Tag(name = "Lançamentos", description = "Lançamentos API")
 public class LancamentoController {
+
+	@Autowired
 	private LancamentoService lancamentoService;
 
 	@PostMapping("update-pago")
-	public ResponseEntity<Object> updatePago(@RequestParam("id") UUID idLancamento, @RequestParam("pago") boolean isPago) {
+	public ResponseEntity<Object> updatePago(@RequestParam("id") UUID idLancamento,
+			@RequestParam("pago") boolean isPago) {
 		lancamentoService.updatePago(idLancamento, isPago);
 		return ResponseEntity.noContent().build();
 	}

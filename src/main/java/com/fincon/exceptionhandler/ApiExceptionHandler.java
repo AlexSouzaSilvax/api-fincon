@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -30,9 +31,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
-
 import com.fincon.exceptions.NegocioException;
 import com.fincon.exceptions.ObjectNotFoundException;
+
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -237,7 +238,23 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 		Problem problem = createProblemBuilder(status, problemType, detail)
 				.userMessage(detail)
-				.userMessage("Você não possui permissão para executar essa operação.")
+				.userMessage("Usuário/Senha inválidos.")
+				.build();
+
+		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+	}
+
+	@ExceptionHandler(InternalAuthenticationServiceException.class)
+	public ResponseEntity<?> handleInternalAuthenticationServiceException(InternalAuthenticationServiceException ex,
+			WebRequest request) {
+
+		HttpStatus status = HttpStatus.FORBIDDEN;
+		ProblemType problemType = ProblemType.ACESSO_NEGADO;
+		String detail = ex.getMessage();
+
+		Problem problem = createProblemBuilder(status, problemType, detail)
+				.userMessage(detail)
+				.userMessage("Usuário/Senha inválidos.")
 				.build();
 
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);

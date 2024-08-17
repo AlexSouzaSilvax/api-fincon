@@ -1,22 +1,25 @@
 package com.fincon.controller;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.fincon.dto.UserDTO;
 import com.fincon.dto.UserUpdateDTO;
 import com.fincon.service.UsuarioService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/user")
 @AllArgsConstructor
-@CrossOrigin
 @Tag(name = "User", description = "User API")
 public class UsuarioController {
 
