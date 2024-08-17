@@ -93,4 +93,8 @@ public class UsuarioService {
 
 		return listaUserLancamentoMesAtualDTO;
 	}
+
+	public String findIdByUsername(String pUsername) {
+		return userRepository.findIdByUsername(pUsername);
+	}
 }
