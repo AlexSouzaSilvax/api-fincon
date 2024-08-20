@@ -32,6 +32,14 @@ Estamos utilizando metodologias ágeis para o desenvolvimento do Fincon, especif
 
 A documentação da API está disponível através do Swagger na seguinte URL: `https://api-fincon-7276.onrender.com/swagger-ui.html`
 
+## Executar o Projeto
+
+pipipipopopoó
+
+## Subir para hub.docker.com
+
+pipipipopopoó
+
 ## Contribuição
 
 Se você deseja contribuir com este projeto, sinta-se à vontade para abrir um pull request ou relatar um problema.
