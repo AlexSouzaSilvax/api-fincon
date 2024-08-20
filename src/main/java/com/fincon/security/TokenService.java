@@ -15,7 +15,7 @@ import com.fincon.model.User;
 @Service
 public class TokenService {
 
-    private final String secret = System.getenv("SECRET_KEY_API_FINCON");
+    private final String secret = System.getenv("FINCON_SECRET_KEY_PASSWORD");
 
     public String generateToken(User user) {
         try {
