@@ -14,7 +14,7 @@ Fincon é um sistema para controle financeiro que desenvolvi para me auxiliar no
 
 ## Hospedagem
 
-- **API**: [Render](https://api-fincon.onrender.com/)
+- **API**: [Render](https://api-fincon-7276.onrender.com/)
 - **Banco de Dados**: [Supabase](https://supabase.com/)
 
 ## Metodologia de Desenvolvimento
@@ -30,7 +30,7 @@ Estamos utilizando metodologias ágeis para o desenvolvimento do Fincon, especif
 
 ## Documentação da API
 
-A documentação da API está disponível através do Swagger na seguinte URL: `https://api-fincon.onrender.com/swagger-ui.html`
+A documentação da API está disponível através do Swagger na seguinte URL: `https://api-fincon-7276.onrender.com/swagger-ui.html`
 
 ## Contribuição
 
