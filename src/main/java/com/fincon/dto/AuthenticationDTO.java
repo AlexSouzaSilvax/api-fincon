@@ -1,5 +1,7 @@
 package com.fincon.dto;
 
-public record AuthenticationDTO(String username, String password) {
-    
+import jakarta.validation.constraints.NotNull;
+
+public record AuthenticationDTO(@NotNull String username, @NotNull String password) {
+
 }

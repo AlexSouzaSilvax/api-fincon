@@ -11,6 +11,7 @@ Fincon é um sistema para controle financeiro que desenvolvi para me auxiliar no
 - **PostgreSQL**
 - **Docker**
 - **Render**
+- **Better Stack**
 
 ## Hospedagem
 
@@ -34,11 +35,11 @@ A documentação da API está disponível através do Swagger na seguinte URL: `
 
 ## Executar o Projeto
 
-pipipipopopoó
+Instruções de como executar o projeto.
 
 ## Subir para hub.docker.com
 
-pipipipopopoó
+Instruções de como fazer deploy imagem para o docker.
 
 ## Contribuição
 

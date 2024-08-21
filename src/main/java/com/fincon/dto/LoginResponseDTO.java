@@ -1,5 +1,4 @@
 package com.fincon.dto;
-
-public record LoginResponseDTO(String token) {
+public record LoginResponseDTO(String token, String id) {
     
 }

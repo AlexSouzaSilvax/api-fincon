@@ -18,24 +18,32 @@ import com.fincon.model.User;
 public interface UserRepository extends JpaRepository<User, UUID> {
         UserDetails findByUsername(String username);
 
-        @Query(value = "select username from usuario where email = :pEmail", nativeQuery = true)
+        @Query(value = "select username from Usuario where email = :pEmail", nativeQuery = true)
         String findUsernameByEmail(@Param("pEmail") String pEmail);
 
+        @Modifying(clearAutomatically = true)
         @Transactional
-        @Modifying
-        @Query(value = "update usuario set password = :pSenha where email = :pEmail", nativeQuery = true)
-        void updateSenhaByEmail(@Param("pEmail") String pEmail, @Param("pSenha") String pSenha);
+        @Query(value = "update Usuario set password = :pSenha where email = :pEmail", nativeQuery = true)
+        int updateSenhaByEmail(@Param("pSenha") String pSenha, @Param("pEmail") String pEmail);
 
-        @Query(value = "select u.* from usuario u left join lancamento l on u.id = l.id_usuario where l.mes_referencia = :pMesReferencia and l.ano_referencia = :pAnoReferencia", nativeQuery = true)
+        @Query(value = "select u.* from Usuario u left join lancamento l on u.id = l.id_usuario where l.mes_referencia = :pMesReferencia and l.ano_referencia = :pAnoReferencia", nativeQuery = true)
         List<User> findUserLancamentoMesAtual(@Param("pMesReferencia") int pMesReferencia,
                         @Param("pAnoReferencia") int pAnoReferencia);
 
-        @Transactional
         @Modifying
-        @Query(value = "update usuario set nome = :pNome, email = :pEmail, celular = :pCelular, username = :pUsername, password = :pPassword, data_atualizacao = :pDataAtualizacao where id = :pId", nativeQuery = true)
-        void userUpdateDTO(@Param("pNome") String nome, @Param("pEmail") String pEmail,
+        @Transactional
+        @Query(value = "update Usuario set nome = :pNome, email = :pEmail, celular = :pCelular, username = :pUsername, password = :pPassword, data_atualizacao = :pDataAtualizacao where id = :pId", nativeQuery = true)
+        int userUpdateDTO(@Param("pNome") String nome, @Param("pEmail") String pEmail,
                         @Param("pCelular") String pCelular,
                         @Param("pUsername") String pUsername, @Param("pPassword") String pPassword,
                         @Param("pId") UUID pId, @Param("pDataAtualizacao") Date pDataAtualizacao);
 
+        @Query(value = "select id from Usuario where username = :pUsername", nativeQuery = true)
+        String findIdByUsername(@Param("pUsername") String pUsername);
+
+        @Query(value = "SELECT EXISTS (SELECT 1 FROM Usuario WHERE email = :pEmail ) AS registro_existe", nativeQuery = true)
+        boolean existsUserByEmail(@Param("pEmail") String pEmail);
+
+        @Query(value = "SELECT EXISTS (SELECT 1 FROM Usuario WHERE username = :pUsername ) AS registro_existe", nativeQuery = true)
+        boolean existsUserByUsername(@Param("pUsername") String pUsername);
 }

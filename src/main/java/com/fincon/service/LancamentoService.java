@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +21,6 @@ import com.fincon.enums.TipoPagamento;
 import com.fincon.model.Lancamento;
 import com.fincon.model.User;
 import com.fincon.repository.LancamentoRepository;
-
-import org.springframework.data.domain.Sort;
 
 import lombok.AllArgsConstructor;
 
@@ -306,7 +305,7 @@ public class LancamentoService {
 	}
 
 	@Transactional
-    public void updatePago(UUID idLancamento, boolean isPago) {
-        lancamentoRespository.updatePago(idLancamento,  isPago);
-    }
+	public void updatePago(UUID idLancamento, boolean isPago) {
+		lancamentoRespository.updatePago(idLancamento, isPago);
+	}
 }
