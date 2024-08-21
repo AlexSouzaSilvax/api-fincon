@@ -43,4 +43,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
         @Query(value = "SELECT EXISTS (SELECT 1 FROM Usuario WHERE email = :pEmail ) AS registro_existe", nativeQuery = true)
         boolean existsUserByEmail(@Param("pEmail") String pEmail);
+
+        @Query(value = "SELECT EXISTS (SELECT 1 FROM Usuario WHERE username = :pUsername ) AS registro_existe", nativeQuery = true)
+        boolean existsUserByUsername(@Param("pUsername") String pUsername);
 }
