@@ -28,11 +28,7 @@ public class EnviaEmailService {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
-        System.out.println("\n\n<--------------------------------->\n\n");
-        System.out.println("Enviando e-mail simples...\n");
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Enviado com sucesso!");
-        System.out.println("\n\n<--------------------------------->\n\n");
         return response.body();
     }
 
@@ -45,11 +41,7 @@ public class EnviaEmailService {
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
-        System.out.println("\n\n<--------------------------------->\n\n");
-        System.out.println("Enviando e-mail com anexo...\n");
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Enviado com sucesso!");
-        System.out.println("\n\n<--------------------------------->\n\n");
         return response.body();
     }
 
