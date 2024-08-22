@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fincon.dto.UserDTO;
@@ -28,6 +29,11 @@ public class UsuarioController {
 	@GetMapping("find-all")
 	public ResponseEntity<List<UserDTO>> findAll() {
 		return ResponseEntity.ok(usuarioService.findAll());
+	}
+
+	@GetMapping("find-by-id")
+	public ResponseEntity<Object> findById(@RequestParam String id) {
+		return ResponseEntity.ok(usuarioService.findById(UUID.fromString(id)));
 	}
 
 	@PostMapping("update")
