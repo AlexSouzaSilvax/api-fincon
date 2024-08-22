@@ -2,6 +2,7 @@ package com.fincon.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Sort;
@@ -38,8 +39,8 @@ public class UsuarioService {
 		return userDTO.UserToUserDTO(userRepository.findAll(Sort.by(Sort.Direction.DESC, "id")));
 	}
 
-	public Object findById(UUID idUser) {
-		return userRepository.findById(idUser);
+	public Optional<User> findById(UUID id) {
+		return userRepository.findById(id);
 	}
 
 	public User save(User pUser) {
