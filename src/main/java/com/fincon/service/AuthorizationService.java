@@ -47,27 +47,36 @@ public class AuthorizationService implements UserDetailsService {
     }
 
     public ResponseEntity<Object> login(@RequestBody @Valid AuthenticationDTO data) {
+
+        if (data.username().isEmpty() && data.username().trim().isBlank() && data.password().isEmpty()) {
+            throw new IllegalArgumentException("Usuário/Senha informado inválido");
+        }
+
         authenticationManager = context.getBean(AuthenticationManager.class);
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
+        System.out.println("usernamePassword: " + usernamePassword);
         var auth = this.authenticationManager.authenticate(usernamePassword);
+        System.out.println("auth: " + auth);
         var token = tokenService.generateToken((User) auth.getPrincipal());
+        System.out.println("token: " + token);
         String idUsuario = usuarioService.findIdByUsername(data.username());
-        return ResponseEntity.ok(new LoginResponseDTO(token, idUsuario));
+        System.out.println("idUsuario: " + idUsuario);
+        return ResponseEntity.ok(new LoginResponseDTO(token, idUsuario, data.username()));
     }
 
-    public ResponseEntity<Object> register(@RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO registerDTO) {
 
         if (!EmailValidator.isValidEmail(registerDTO.email().trim().replaceAll("^\"|\"$", "").toLowerCase())) {
             throw new IllegalArgumentException("E-mail informado inválido");
         }
 
         if (userRepository.existsUserByEmail(registerDTO.email())) {
-            throw new UserAlreadyExistsException("O e-mail fornecido já está cadastrado.");
+            throw new UserAlreadyExistsException("O e-mail fornecido já está cadastrado");
         }
 
         if (userRepository.existsUserByUsername(registerDTO.username())) {
-            throw new UserAlreadyExistsException("O nome de usuário fornecido já está em uso.");
+            throw new UserAlreadyExistsException("O nome de usuário fornecido já está em uso");
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
