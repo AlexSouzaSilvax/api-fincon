@@ -38,12 +38,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
                         @Param("pUsername") String pUsername, @Param("pPassword") String pPassword,
                         @Param("pId") UUID pId, @Param("pDataAtualizacao") Date pDataAtualizacao);
 
-        @Query(value = "select id from Usuario where username = :pUsername", nativeQuery = true)
+        @Query(value = "select id from Usuario where LOWER(username) = LOWER(:pUsername)", nativeQuery = true)
         String findIdByUsername(@Param("pUsername") String pUsername);
 
         @Query(value = "SELECT EXISTS (SELECT 1 FROM Usuario WHERE email = :pEmail ) AS registro_existe", nativeQuery = true)
         boolean existsUserByEmail(@Param("pEmail") String pEmail);
 
-        @Query(value = "SELECT EXISTS (SELECT 1 FROM Usuario WHERE username = :pUsername ) AS registro_existe", nativeQuery = true)
+        @Query(value = "SELECT EXISTS (SELECT 1 FROM Usuario WHERE LOWER(username) = LOWER(:pUsername) ) AS registro_existe", nativeQuery = true)
         boolean existsUserByUsername(@Param("pUsername") String pUsername);
 }
