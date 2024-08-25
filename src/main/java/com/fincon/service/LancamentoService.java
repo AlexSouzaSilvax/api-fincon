@@ -32,6 +32,8 @@ public class LancamentoService {
 
 	private LancamentoDTO lancamentoDTO;
 
+	private UsuarioService usuarioService;
+
 	public List<LancamentoDTO> findAll() {
 		return lancamentoDTO
 				.LancamentoToLancamentoDTO(lancamentoRespository.findAll(Sort.by(Sort.Direction.DESC, "id")));
@@ -122,7 +124,7 @@ public class LancamentoService {
 
 	@Transactional
 	public Lancamento save(UUID idUser, Lancamento pLancamento) {
-		pLancamento.setUser(new User(idUser));
+		pLancamento.setUser(usuarioService.findUserById(idUser));
 
 		if (pLancamento.getId() == null) {
 			pLancamento.setDataLancamento(Util.dataAtual());
