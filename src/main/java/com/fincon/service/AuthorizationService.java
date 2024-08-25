@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fincon.Util.EmailValidator;
@@ -46,15 +47,14 @@ public class AuthorizationService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
+    @Transactional
     public ResponseEntity<Object> login(@RequestBody @Valid AuthenticationDTO data) {
         String username = data.username().trim().toLowerCase();
-        System.out.println(username);
         if (username.isEmpty() && username.isBlank() && data.password().isEmpty()) {
             throw new IllegalArgumentException("Usuário/Senha informado inválido");
         }
 
         authenticationManager = context.getBean(AuthenticationManager.class);
-
         var usernamePassword = new UsernamePasswordAuthenticationToken(username, data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
@@ -62,6 +62,7 @@ public class AuthorizationService implements UserDetailsService {
         return ResponseEntity.ok(new LoginResponseDTO(token, idUsuario, username));
     }
 
+    @Transactional
     public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO registerDTO) {
         String username = registerDTO.username().trim().toLowerCase();
 
