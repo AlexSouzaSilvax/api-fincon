@@ -46,8 +46,8 @@ public class LancamentoController {
 	}
 
 	@PostMapping("delete")
-	public ResponseEntity<Object> delete(@RequestBody UUID id) {
-		lancamentoService.delete(id);
+	public ResponseEntity<Object> delete(@RequestBody String id) {
+		lancamentoService.delete(UUID.fromString(id));
 		return ResponseEntity.noContent().build();
 	}
 

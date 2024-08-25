@@ -43,8 +43,8 @@ public class UsuarioController {
 	}
 
 	@PostMapping("delete")
-	public ResponseEntity<Object> delete(@RequestBody UUID id) {
-		usuarioService.delete(id);
+	public ResponseEntity<Object> delete(@RequestBody String id) {
+		usuarioService.delete(UUID.fromString(id));
 		return ResponseEntity.noContent().build();
 	}
 
