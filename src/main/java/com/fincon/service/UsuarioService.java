@@ -22,6 +22,7 @@ import com.fincon.model.User;
 import com.fincon.repository.LancamentoRepository;
 import com.fincon.repository.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -41,6 +42,11 @@ public class UsuarioService {
 
 	public Optional<User> findById(UUID id) {
 		return userRepository.findById(id);
+	}
+
+	public User findUserById(UUID id) {
+		return userRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Usuario nao encontrado pelo ID: " + id));
 	}
 
 	public User save(User pUser) {
