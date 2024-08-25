@@ -2,6 +2,7 @@ package com.fincon.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Sort;
@@ -21,6 +22,7 @@ import com.fincon.model.User;
 import com.fincon.repository.LancamentoRepository;
 import com.fincon.repository.UserRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -38,8 +40,13 @@ public class UsuarioService {
 		return userDTO.UserToUserDTO(userRepository.findAll(Sort.by(Sort.Direction.DESC, "id")));
 	}
 
-	public Object findById(UUID idUser) {
-		return userRepository.findById(idUser);
+	public Optional<User> findById(UUID id) {
+		return userRepository.findById(id);
+	}
+
+	public User findUserById(UUID id) {
+		return userRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Usuario nao encontrado pelo ID: " + id));
 	}
 
 	public User save(User pUser) {
