@@ -20,13 +20,13 @@ public enum ProblemType {
 	CPF_EM_USO("/cpf-em-uso", "CPF em uso"),
 	PERFIL_EXISTENTE("/perfil-existente", "Perfil existente"),
 	PERFIL_NAO_ENCONTRADO("/perfil-nao-encontrado", "Perfil não encontrado");
-	
+
 	private String title;
 	private String uri;
-	
+
 	ProblemType(String path, String title) {
 		this.uri = "https://www.fincon.com.br" + path;
 		this.title = title;
 	}
-	
+
 }

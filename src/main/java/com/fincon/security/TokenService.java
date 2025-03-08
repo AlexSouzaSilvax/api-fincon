@@ -42,14 +42,14 @@ public class TokenService {
                     .build()
                     .verify(token)
                     .getSubject();
-        }
-
-        catch (JWTVerificationException exception) {
-            return "";
+        } catch (JWTVerificationException exception) {
+            throw new JWTVerificationException("Token inválido ou expirado.");
         }
     }
 
     private Instant getExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusHours(24).toInstant(ZoneOffset.of("-03:00"));
+        // return LocalDateTime.now().plusMinutes(1).toInstant(ZoneOffset.of("-03:00"));
+
     }
 }
