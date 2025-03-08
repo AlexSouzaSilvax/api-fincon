@@ -18,6 +18,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.fincon.Util.Util;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
@@ -25,11 +27,10 @@ public class SecurityConfigurations {
     @Autowired
     SecurityFilter securityFilter;
 
-    private static final String URL_DEPLOY_WEB = System.getenv("FINCON_DEPLOY_WEB_URL");
+    private static final List<String> URLS_DEPLOY_WEB = new Util().getEnvList("FINCON_DEPLOY_WEB_URLS");
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
         return httpSecurity
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
@@ -57,7 +58,7 @@ public class SecurityConfigurations {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200", URL_DEPLOY_WEB));
+        configuration.setAllowedOrigins(URLS_DEPLOY_WEB);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);

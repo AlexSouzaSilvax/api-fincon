@@ -15,7 +15,7 @@ public class EnvironmentValidator {
             "FINCON_DATABASE_PASSWORD",
             "FINCON_ENVIO_EMAIL_URL",
             "FINCON_SECRET_KEY_PASSWORD",
-            "FINCON_DEPLOY_WEB_URL");
+            "FINCON_DEPLOY_WEB_URLS");
 
     @PostConstruct
     public void validateEnvVars() {

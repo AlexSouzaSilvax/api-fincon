@@ -5,8 +5,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.TextStyle;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 public class Util {
     public static Date dataAtual() {
@@ -35,6 +38,12 @@ public class Util {
         pMesAtualExtenso = pMesAtualExtenso.substring(0, 1).toUpperCase() + pMesAtualExtenso.substring(1);
 
         return pMesAtualExtenso;
+    }
+
+    public List<String> getEnvList(String envVar) {
+        return Optional.ofNullable(System.getenv(envVar))
+                .map(value -> Arrays.asList(value.split(";")))
+                .orElse(List.of());
     }
 
 }
