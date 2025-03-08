@@ -42,7 +42,7 @@ A documentação da API está disponível através do Swagger na seguinte URL: `
 
 ```bash
 # executar
-    cmd /C ".....java\17\bin\java.exe @C:\Users\....\AppData\Local\Temp\.argfile com.fincon.FinconApplication "
+    mvn spring-boot:run
 ```
 
 ## Subir para hub.docker.com
