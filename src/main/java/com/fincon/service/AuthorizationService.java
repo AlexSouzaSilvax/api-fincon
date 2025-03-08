@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fincon.Util.EmailValidator;
@@ -49,44 +50,54 @@ public class AuthorizationService implements UserDetailsService {
 
     @Transactional
     public ResponseEntity<Object> login(@RequestBody @Valid AuthenticationDTO data) {
-        String username = data.username().trim().toLowerCase();
-        if (username.isEmpty() && username.isBlank() && data.password().isEmpty()) {
-            throw new IllegalArgumentException("Usuário/Senha informado inválido");
-        }
+        try {
+            String username = data.username().trim().toLowerCase();
+            if (username.isEmpty() && username.isBlank() && data.password().isEmpty()) {
+                throw new IllegalArgumentException("Usuário/Senha informado inválido");
+            }
 
-        authenticationManager = context.getBean(AuthenticationManager.class);
-        var usernamePassword = new UsernamePasswordAuthenticationToken(username, data.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
-        var token = tokenService.generateToken((User) auth.getPrincipal());
-        String idUsuario = usuarioService.findIdByUsername(username);
-        return ResponseEntity.ok(new LoginResponseDTO(token, idUsuario, username));
+            authenticationManager = context.getBean(AuthenticationManager.class);
+            var usernamePassword = new UsernamePasswordAuthenticationToken(username, data.password());
+            var auth = this.authenticationManager.authenticate(usernamePassword);
+            var token = tokenService.generateToken((User) auth.getPrincipal());
+            String idUsuario = usuarioService.findIdByUsername(username);
+            return ResponseEntity.ok(new LoginResponseDTO(token, idUsuario, username));
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw e;
+        }
     }
 
     @Transactional
     public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO registerDTO) {
-        String username = registerDTO.username().trim().toLowerCase();
+        try {
+            String username = registerDTO.username().trim().toLowerCase();
 
-        if (!EmailValidator.isValidEmail(registerDTO.email().trim().replaceAll("^\"|\"$", "").toLowerCase())) {
-            throw new IllegalArgumentException("E-mail informado inválido");
+            if (!EmailValidator.isValidEmail(registerDTO.email().trim().replaceAll("^\"|\"$", "").toLowerCase())) {
+                throw new IllegalArgumentException("E-mail informado inválido");
+            }
+
+            if (userRepository.existsUserByEmail(registerDTO.email())) {
+                throw new UserAlreadyExistsException("O e-mail fornecido já está cadastrado");
+            }
+
+            if (userRepository.existsUserByUsername(username)) {
+                throw new UserAlreadyExistsException("O nome de usuário fornecido já está em uso");
+            }
+
+            String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
+
+            User newUser = new User(registerDTO.nome(), registerDTO.email(), username, encryptedPassword,
+                    registerDTO.role());
+            newUser.setDataCriacao(new Date(System.currentTimeMillis()));
+
+            this.userRepository.save(newUser);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw e;
         }
-
-        if (userRepository.existsUserByEmail(registerDTO.email())) {
-            throw new UserAlreadyExistsException("O e-mail fornecido já está cadastrado");
-        }
-
-        if (userRepository.existsUserByUsername(username)) {
-            throw new UserAlreadyExistsException("O nome de usuário fornecido já está em uso");
-        }
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(registerDTO.password());
-
-        User newUser = new User(registerDTO.nome(), registerDTO.email(), username, encryptedPassword,
-                registerDTO.role());
-        newUser.setDataCriacao(new Date(System.currentTimeMillis()));
-
-        this.userRepository.save(newUser);
-
-        return ResponseEntity.ok().build();
     }
 
 }

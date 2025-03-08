@@ -29,11 +29,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UsuarioService {
 
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 
-	private LancamentoRepository lancamentoRespository;
+	private final LancamentoRepository lancamentoRespository;
 
-	private UserDTO userDTO;
+	private final UserDTO userDTO;
 
 	@Transactional
 	public List<UserDTO> findAll() {
