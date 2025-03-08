@@ -60,7 +60,7 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, UUID> {
 			@Param("pAnoReferencia") int pAnoReferencia);
 
 	@Transactional
-	@Query(value = "select ( (SELECT SUM(valor) FROM lancamento WHERE id_usuario = :pIdUsuario AND mes_referencia = :pMesReferencia AND ano_referencia = :pAnoReferencia and tipo_lancamento = 0 AND pago = true) - (SELECT SUM(valor) FROM lancamento WHERE id_usuario = :pIdUsuario AND mes_referencia = :pMesReferencia AND ano_referencia = :pAnoReferencia and tipo_lancamento = 1 AND pago = true) ) as saldo", nativeQuery = true)
+	@Query(value = "select ( (SELECT COALESCE(SUM(valor), 0) FROM lancamento WHERE id_usuario = :pIdUsuario AND mes_referencia = :pMesReferencia AND ano_referencia = :pAnoReferencia and tipo_lancamento = 0 AND pago = true) - (SELECT COALESCE(SUM(valor), 0) FROM lancamento WHERE id_usuario = :pIdUsuario AND mes_referencia = :pMesReferencia AND ano_referencia = :pAnoReferencia and tipo_lancamento = 1 AND pago = true) ) as saldo", nativeQuery = true)
 	String buscaTotalLancamentoPorMes(UUID pIdUsuario, int pMesReferencia, int pAnoReferencia);
 
 	@Transactional
