@@ -22,14 +22,14 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, UUID> {
 	List<Lancamento> findAllOrderNumeroParcela();
 
 	@Transactional
-	@Query(value = "select * from lancamento where id_usuario = :pIdUsuario and mes_referencia = :pMesReferencia and ano_referencia = :pAnoReferencia order by 1 desc", nativeQuery = true)
+	@Query(value = "select * from lancamento where id_usuario = :pIdUsuario and mes_referencia = :pMesReferencia and ano_referencia = :pAnoReferencia order by data_lancamento desc", nativeQuery = true)
 	List<Lancamento> findListMain(
 			@Param("pIdUsuario") UUID pIdUsuario,
 			@Param("pMesReferencia") int pMesReferencia,
 			@Param("pAnoReferencia") int pAnoReferencia);
 
 	@Transactional
-	@Query(value = "select * from lancamento where id_usuario = :pIdUsuario and ano_referencia = :pAnoReferencia order by 1 desc", nativeQuery = true)
+	@Query(value = "select * from lancamento where id_usuario = :pIdUsuario and ano_referencia = :pAnoReferencia order by data_lancamento desc", nativeQuery = true)
 	List<Lancamento> findListMain(
 			@Param("pIdUsuario") UUID pIdUsuario,
 			@Param("pAnoReferencia") int pAnoReferencia);
