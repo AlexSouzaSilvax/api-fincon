@@ -1,6 +1,7 @@
 package com.fincon.service;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -21,7 +22,9 @@ import com.fincon.Util.EmailValidator;
 import com.fincon.dto.AuthenticationDTO;
 import com.fincon.dto.LoginResponseDTO;
 import com.fincon.dto.RegisterDTO;
+import com.fincon.enums.CommonLogEnum;
 import com.fincon.exceptions.UserAlreadyExistsException;
+import com.fincon.model.CommonLog;
 import com.fincon.model.User;
 import com.fincon.repository.UserRepository;
 import com.fincon.security.TokenService;
@@ -44,6 +47,9 @@ public class AuthorizationService implements UserDetailsService {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    CommonLogService commonLogService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username);
@@ -53,7 +59,7 @@ public class AuthorizationService implements UserDetailsService {
     public ResponseEntity<Object> login(@RequestBody @Valid AuthenticationDTO data) {
         try {
             String username = data.username().trim().toLowerCase();
-            if (username.isEmpty() && username.isBlank() && data.password().isEmpty()) {
+            if (username.isEmpty() || username.isBlank() && data.password().isEmpty()) {
                 throw new IllegalArgumentException("Usuário/Senha informado inválido");
             }
 
@@ -62,7 +68,19 @@ public class AuthorizationService implements UserDetailsService {
             var auth = this.authenticationManager.authenticate(usernamePassword);
             var token = tokenService.generateToken((User) auth.getPrincipal());
             String idUsuario = usuarioService.findIdByUsername(username);
-            return ResponseEntity.ok(new LoginResponseDTO(token, idUsuario, username));
+
+            LoginResponseDTO loginResponseDTO = new LoginResponseDTO(token, idUsuario, username);
+
+            // Criando Logs Sucesso
+            CommonLog commonLog = new CommonLog();
+            commonLog.setEtapa(CommonLogEnum.LOGIN);
+            commonLog.setDescricao("Usuário: " + data.username() + " realizou login com sucesso!");
+            commonLog.setJsonEnvio("Usuário: " + username + " Senha: " + data.password());
+            commonLog.setJsonRetorno(loginResponseDTO.toString());
+            commonLog.setUsuario(UUID.fromString(idUsuario));
+            commonLogService.save(commonLog);
+
+            return ResponseEntity.ok(loginResponseDTO);
         } catch (Exception e) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw e;
@@ -93,6 +111,15 @@ public class AuthorizationService implements UserDetailsService {
             newUser.setDataCriacao(new Date(System.currentTimeMillis()));
 
             this.userRepository.save(newUser);
+
+            // Criando Logs Sucesso
+            CommonLog commonLog = new CommonLog();
+            commonLog.setEtapa(CommonLogEnum.NOVO_USUARIO);
+            commonLog.setDescricao("Usuário criado com sucesso!");
+            commonLog.setJsonEnvio(registerDTO.toString());
+            commonLog.setJsonRetorno(newUser.toString());
+            commonLog.setUsuario(newUser.getId());
+            commonLogService.save(commonLog);
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {

@@ -18,8 +18,10 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import com.fincon.Util.Util;
 import com.fincon.dto.LancamentoDTO;
 import com.fincon.enums.Categoria;
+import com.fincon.enums.CommonLogEnum;
 import com.fincon.enums.TipoLancamento;
 import com.fincon.enums.TipoPagamento;
+import com.fincon.model.CommonLog;
 import com.fincon.model.Lancamento;
 import com.fincon.model.User;
 import com.fincon.repository.LancamentoRepository;
@@ -35,6 +37,8 @@ public class LancamentoService {
 	private LancamentoDTO lancamentoDTO;
 
 	private UsuarioService usuarioService;
+
+	private CommonLogService commonLogService;
 
 	public List<LancamentoDTO> findAll() {
 		return lancamentoDTO
@@ -192,7 +196,18 @@ public class LancamentoService {
 						.setDescricao(pLancamento.getDescricao() + " " + 1 + "/" + pLancamento.getQuantidadeParcelas());
 			}
 
-			return lancamentoRespository.save(pLancamento);
+			Lancamento novoLancamento = lancamentoRespository.save(pLancamento);
+
+			// Criando Logs Sucesso
+			CommonLog commonLog = new CommonLog();
+			commonLog.setEtapa(CommonLogEnum.NOVO_LANCAMENTO);
+			commonLog.setDescricao("Lançamento criado com sucesso!");
+			commonLog.setJsonEnvio("");
+			commonLog.setJsonRetorno(novoLancamento.toString());
+			commonLog.setUsuario(novoLancamento.getUser().getId());
+			commonLogService.save(commonLog);
+
+			return novoLancamento;
 
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
