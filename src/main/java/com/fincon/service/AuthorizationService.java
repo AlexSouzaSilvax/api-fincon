@@ -1,6 +1,6 @@
 package com.fincon.service;
 
-import java.sql.Date;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,7 +49,7 @@ public class AuthorizationService implements UserDetailsService {
         return userRepository.findByUsername(username);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResponseEntity<Object> login(@RequestBody @Valid AuthenticationDTO data) {
         try {
             String username = data.username().trim().toLowerCase();
@@ -68,7 +69,7 @@ public class AuthorizationService implements UserDetailsService {
         }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO registerDTO) {
         try {
             String username = registerDTO.username().trim().toLowerCase();

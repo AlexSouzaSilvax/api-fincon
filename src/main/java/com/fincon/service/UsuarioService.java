@@ -2,13 +2,13 @@ package com.fincon.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,19 +29,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UsuarioService {
 
-	private final UserRepository userRepository;
+	private UserRepository userRepository;
 
-	private final LancamentoRepository lancamentoRespository;
+	private LancamentoRepository lancamentoRespository;
 
-	private final UserDTO userDTO;
+	private UserDTO userDTO;
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public List<UserDTO> findAll() {
 		return userDTO.UserToUserDTO(userRepository.findAll(Sort.by(Sort.Direction.DESC, "id")));
-	}
-
-	public Optional<User> findById(UUID id) {
-		return userRepository.findById(id);
 	}
 
 	public User findUserById(UUID id) {

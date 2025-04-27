@@ -1,6 +1,7 @@
 package com.fincon.dto;
 
 import java.util.UUID;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class UserUpdateDTO {
         this.nome = nome;
         this.email = email;
         this.celular = celular;
-        this.username = username;        
+        this.username = username;
         this.password = password;
     }
 }

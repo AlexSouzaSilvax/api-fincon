@@ -75,4 +75,8 @@ public interface LancamentoRepository extends JpaRepository<Lancamento, UUID> {
 	@Modifying(clearAutomatically = true)
 	@Query(value = "update lancamento set pago = :pIsPago where id = :pId", nativeQuery = true)
 	void updatePago(@Param("pId") UUID idLancamento, @Param("pIsPago") boolean isPago);
+
+	@Transactional
+	@Query(value = "SELECT EXISTS (SELECT 1 FROM lancamento WHERE id_usuario = :idUser and mes_referencia = :pMesReferencia and ano_referencia = :pAnoReferencia ) AS registro_existe", nativeQuery = true)
+	boolean existsLancamentoMesAnterior(UUID idUser, int pMesReferencia, int pAnoReferencia);
 }

@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
@@ -29,11 +30,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class LancamentoService {
 
-	private final LancamentoRepository lancamentoRespository;
+	private LancamentoRepository lancamentoRespository;
 
-	private final LancamentoDTO lancamentoDTO;
+	private LancamentoDTO lancamentoDTO;
 
-	private final UsuarioService usuarioService;
+	private UsuarioService usuarioService;
 
 	public List<LancamentoDTO> findAll() {
 		return lancamentoDTO
@@ -44,7 +45,7 @@ public class LancamentoService {
 		return lancamentoRespository.findAllOrderNumeroParcela();
 	}
 
-	@Transactional(rollbackFor = Exception.class)
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
 	public List<LancamentoDTO> findListMain(UUID idUser, int pMesReferencia, int pAnoReferencia) {
 		try {
 			List<Lancamento> listaLancamentos = new ArrayList<>();
@@ -53,6 +54,7 @@ public class LancamentoService {
 			if (pMesReferencia == 0) {
 				listaLancamentos = lancamentoRespository.findListMain(idUser, pAnoReferencia);
 			} else {
+				// TODO: Validar se existe lancamento no mes anterior.
 				this.insereSaldoMesAnterior(idUser, pMesReferencia, pAnoReferencia);
 				listaLancamentos = lancamentoRespository.findListMain(idUser, pMesReferencia,
 						pAnoReferencia);
@@ -77,39 +79,54 @@ public class LancamentoService {
 		return listaLancamentoDTO;
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void insereSaldoMesAnterior(UUID idUser, int pMesReferencia, int pAnoReferencia) {
 		try {
-			int mesSeguinte = pMesReferencia + 1;
-			if (mesSeguinte > 12) {
-				pMesReferencia = 1;
-				pAnoReferencia += 1;
-			}
-			Date hoje = Util.dataAtual();
-			// verifica se exite o lançamento saldoMesAnterior já criado
-			List<Lancamento> listaLancamentos = this.lancamentoRespository.findByLancamentoSaldoMesAnterior(idUser,
-					pMesReferencia, pAnoReferencia);
-			if (listaLancamentos.isEmpty()) { // nenhum lancamento criado
-				// criar lancamento
-				Lancamento novoLancamentoSaldoMesAnterior = new Lancamento();
-				novoLancamentoSaldoMesAnterior.setUser(new User(idUser));
-				novoLancamentoSaldoMesAnterior.setAnoReferencia(pAnoReferencia);
-				novoLancamentoSaldoMesAnterior.setMesReferencia(pMesReferencia);
-				novoLancamentoSaldoMesAnterior.setCategoria(Categoria.TRABALHO);
-				novoLancamentoSaldoMesAnterior.setDataPagamento(hoje);
-				novoLancamentoSaldoMesAnterior.setDataPrevistaPagamento(hoje);
-				novoLancamentoSaldoMesAnterior.setDataVencimento(hoje);
-				novoLancamentoSaldoMesAnterior.setDescricao("Saldo do Mês Anterior");
-				novoLancamentoSaldoMesAnterior.setObservacao("Criado de forma automática pelo sistema.");
-				novoLancamentoSaldoMesAnterior.setPago(true);
-				novoLancamentoSaldoMesAnterior.setTipoLancamento(TipoLancamento.ENTRADA);
-				novoLancamentoSaldoMesAnterior.setTipoPagamento(TipoPagamento.PIX);
-				novoLancamentoSaldoMesAnterior
-						.setValor(buscaTotalLancamentoPorMesAno(idUser, (pMesReferencia - 1), pAnoReferencia));
-				save(idUser, novoLancamentoSaldoMesAnterior);
+			if (existsLancamentoMesAnterior(idUser, pMesReferencia, pAnoReferencia)) {
+				int mesSeguinte = pMesReferencia + 1;
+				if (mesSeguinte > 12) {
+					pMesReferencia = 1;
+					pAnoReferencia += 1;
+				}
+				Date hoje = Util.dataAtual();
+				// verifica se exite o lançamento saldoMesAnterior já criado
+				List<Lancamento> listaLancamentos = this.lancamentoRespository.findByLancamentoSaldoMesAnterior(idUser,
+						pMesReferencia, pAnoReferencia);
+				if (listaLancamentos.isEmpty()) { // nenhum lancamento criado
+					// criar lancamento
+					Lancamento novoLancamentoSaldoMesAnterior = new Lancamento();
+					novoLancamentoSaldoMesAnterior.setUser(new User(idUser));
+					novoLancamentoSaldoMesAnterior.setAnoReferencia(pAnoReferencia);
+					novoLancamentoSaldoMesAnterior.setMesReferencia(pMesReferencia);
+					novoLancamentoSaldoMesAnterior.setCategoria(Categoria.TRABALHO);
+					novoLancamentoSaldoMesAnterior.setDataPagamento(hoje);
+					novoLancamentoSaldoMesAnterior.setDataPrevistaPagamento(hoje);
+					novoLancamentoSaldoMesAnterior.setDataVencimento(hoje);
+					novoLancamentoSaldoMesAnterior.setDescricao("Saldo do Mês Anterior");
+					novoLancamentoSaldoMesAnterior.setObservacao("Criado de forma automática pelo sistema.");
+					novoLancamentoSaldoMesAnterior.setPago(true);
+					novoLancamentoSaldoMesAnterior.setTipoLancamento(TipoLancamento.ENTRADA);
+					novoLancamentoSaldoMesAnterior.setTipoPagamento(TipoPagamento.PIX);
+					novoLancamentoSaldoMesAnterior
+							.setValor(buscaTotalLancamentoPorMesAno(idUser, (pMesReferencia - 1), pAnoReferencia));
+					save(idUser, novoLancamentoSaldoMesAnterior);
+				}
 			}
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			throw e;
+		}
+	}
+
+	private boolean existsLancamentoMesAnterior(UUID idUser, int pMesReferencia, int pAnoReferencia) {
+		try {
+			pMesReferencia -= 1;
+			if (pMesReferencia == 1 || pMesReferencia == 01) {
+				pMesReferencia = 12;
+				pAnoReferencia -= 1;
+			}
+			return lancamentoRespository.existsLancamentoMesAnterior(idUser, pMesReferencia, pAnoReferencia);
+		} catch (Exception e) {
 			throw e;
 		}
 	}
@@ -118,7 +135,7 @@ public class LancamentoService {
 		return lancamentoRespository.findById(id);
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void delete(UUID id) {
 		try {
 			if (existsLancamento(id)) {
@@ -130,7 +147,7 @@ public class LancamentoService {
 		}
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public Object saveOrUpdate(Lancamento pLancamento) {
 		try {
 			if (pLancamento.getId() != null) {
@@ -143,7 +160,7 @@ public class LancamentoService {
 		}
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public Lancamento save(UUID idUser, Lancamento pLancamento) {
 		try {
 			pLancamento.setUser(usuarioService.findUserById(idUser));
@@ -184,7 +201,7 @@ public class LancamentoService {
 
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public Optional<Lancamento> update(LancamentoDTO pLancamentoDTO) {
 		try {
 			lancamentoRespository.save(new Lancamento(pLancamentoDTO));
@@ -195,7 +212,7 @@ public class LancamentoService {
 		}
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void saveLancamentosProxMensal(int pQuantidadedeMensal, Lancamento pLancamento) {
 		try {
 			int quantidadedeMensal = pQuantidadedeMensal;
@@ -222,7 +239,7 @@ public class LancamentoService {
 		}
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void salvaParcelasDoProxAnoDiante(int quantidadeParcelasAnoAtual, Lancamento pLancamento) {
 		int quantidadedeParcelasProximoAno = pLancamento.getQuantidadeParcelas() - quantidadeParcelasAnoAtual;
 		int numeroParcela = quantidadeParcelasAnoAtual + 1;
@@ -244,7 +261,7 @@ public class LancamentoService {
 	}
 
 	// retorna quantidade de parcelas do ano atual já salvas
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private int saveLancamentoParcelasAnoAtual(Lancamento pLancamento) {
 		try {
 			int pQuantidadeParcelas = pLancamento.getQuantidadeParcelas();
@@ -265,7 +282,7 @@ public class LancamentoService {
 		}
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@SuppressWarnings("deprecation")
 	private Lancamento manipulaDadosLancamento(Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		try {
@@ -320,7 +337,7 @@ public class LancamentoService {
 	}
 
 	// salva lancamentos parcela
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void saveLancamentoParcelas(int i, Lancamento pLancamento, int novoMesReferencia, int novoAnoReferencia) {
 		try {
 			Lancamento lancamento = manipulaDadosLancamento(pLancamento, novoMesReferencia, novoAnoReferencia);
@@ -334,7 +351,7 @@ public class LancamentoService {
 		}
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private BigDecimal buscaTotalLancamentoPorMesAno(UUID idUser, int pMesReferencia, int pAnoReferencia) {
 		BigDecimal saldo = new BigDecimal(0);
 		try {
@@ -348,7 +365,7 @@ public class LancamentoService {
 		return saldo;
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@SuppressWarnings("deprecation")
 	private int ultimoDiaMes(int pMesReferencia) {
 		Calendar instance = Calendar.getInstance();
@@ -358,12 +375,12 @@ public class LancamentoService {
 		return instance.getTime().getDate();
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public boolean existsLancamento(UUID id) {
 		return lancamentoRespository.existsById(id);
 	}
 
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void updatePago(UUID idLancamento, boolean isPago) {
 		lancamentoRespository.updatePago(idLancamento, isPago);
 	}

@@ -4,6 +4,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fincon.dto.LancamentoDTO;
+import com.fincon.enums.Categoria;
+import com.fincon.enums.TipoLancamento;
+import com.fincon.enums.TipoPagamento;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,17 +18,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fincon.dto.LancamentoDTO;
-import com.fincon.enums.Categoria;
-import com.fincon.enums.TipoLancamento;
-import com.fincon.enums.TipoPagamento;
-
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
 @Entity
+@Getter
+@Setter
 @Table(name = "Lancamento")
 public class Lancamento {
 

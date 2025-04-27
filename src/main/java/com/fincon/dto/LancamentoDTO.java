@@ -6,14 +6,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import jakarta.persistence.Column;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fincon.model.Lancamento;
 
+import jakarta.persistence.Column;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
+@Getter
+@Setter
 public class LancamentoDTO {
 
     private UUID id;
@@ -74,7 +77,7 @@ public class LancamentoDTO {
         this.descricao = pLancamento.getDescricao();
         this.valor = pLancamento.getValor();
         this.tipoPagamento = pLancamento.getTipoPagamento().getValue();
-        this.tipoLancamento =  pLancamento.getTipoLancamento().getValue();
+        this.tipoLancamento = pLancamento.getTipoLancamento().getValue();
         this.dataLancamento = pLancamento.getDataLancamento();
         this.pago = pLancamento.isPago();
         this.mensal = pLancamento.isMensal();

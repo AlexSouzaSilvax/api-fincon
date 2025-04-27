@@ -3,6 +3,7 @@ package com.fincon.controller;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import lombok.AllArgsConstructor;
 @Tag(name = "User", description = "User API")
 public class UsuarioController {
 
+	@Autowired
 	private UsuarioService usuarioService;
 
 	@GetMapping("find-all")
@@ -33,7 +35,7 @@ public class UsuarioController {
 
 	@GetMapping("find-by-id")
 	public ResponseEntity<Object> findById(@RequestParam String id) {
-		return ResponseEntity.ok(usuarioService.findById(UUID.fromString(id)));
+		return ResponseEntity.ok(usuarioService.findUserById(UUID.fromString(id)));
 	}
 
 	@PostMapping("update")
