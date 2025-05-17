@@ -204,7 +204,7 @@ public class LancamentoService {
 			commonLog.setDescricao("Lançamento criado com sucesso!");
 			commonLog.setJsonEnvio("");
 			commonLog.setJsonRetorno(novoLancamento.toString());
-			commonLog.setUsuario(novoLancamento.getUser().getId());
+			commonLog.setUsuario(novoLancamento.getUser().getId().toString());
 			commonLogService.save(commonLog);
 
 			return novoLancamento;

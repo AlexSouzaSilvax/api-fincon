@@ -1,7 +1,6 @@
 package com.fincon.service;
 
 import java.util.Date;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -77,7 +76,7 @@ public class AuthorizationService implements UserDetailsService {
             commonLog.setDescricao("Usuário: " + data.username() + " realizou login com sucesso!");
             commonLog.setJsonEnvio("Usuário: " + username + " Senha: " + data.password());
             commonLog.setJsonRetorno(loginResponseDTO.toString());
-            commonLog.setUsuario(UUID.fromString(idUsuario));
+            commonLog.setUsuario(idUsuario);
             commonLogService.save(commonLog);
 
             return ResponseEntity.ok(loginResponseDTO);
@@ -118,7 +117,7 @@ public class AuthorizationService implements UserDetailsService {
             commonLog.setDescricao("Usuário criado com sucesso!");
             commonLog.setJsonEnvio(registerDTO.toString());
             commonLog.setJsonRetorno(newUser.toString());
-            commonLog.setUsuario(newUser.getId());
+            commonLog.setUsuario(newUser.getId().toString());
             commonLogService.save(commonLog);
 
             return ResponseEntity.ok().build();

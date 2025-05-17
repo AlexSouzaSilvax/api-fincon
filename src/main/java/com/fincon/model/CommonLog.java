@@ -30,7 +30,7 @@ public class CommonLog {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private UUID usuario;
+    private String usuario;
 
     @Enumerated(EnumType.STRING)
     private CommonLogEnum etapa;
